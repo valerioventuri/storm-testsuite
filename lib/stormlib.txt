@@ -1,0 +1,11 @@
+** Settings ***
+
+Library   OperatingSystem
+Resource   variables.txt
+
+*** Keywords ***
+
+Execute and Check Success   [Arguments]   ${cmd}
+  ${rc}   ${output}=   Run and Return RC And Output   ${cmd}
+  Should Be Equal As Integers   ${rc}   0   ${output}   False
+  [Return]   ${output}

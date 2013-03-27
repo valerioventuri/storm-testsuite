@@ -1,0 +1,12 @@
+*** Settings ***
+Resource   lib/stormlib.txt
+
+*** Test Cases ***
+
+Check storm can be pinged
+  Run  clientSRM ping -e ${endpoint}
+	
+
+List files in storage area root
+  Run  clientSRM ls -e ${endpoint} -s srm:/${endpoint}/${root} -c 1
+

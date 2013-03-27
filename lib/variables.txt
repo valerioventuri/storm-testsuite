@@ -1,0 +1,4 @@
+*** Variables ***
+
+${endpoint}	omii001-vm04.cnaf.infn.it:8444
+${root}		testers.eu-emi.eu
