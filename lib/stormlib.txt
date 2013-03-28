@@ -5,7 +5,15 @@ Resource   variables.txt
 
 *** Keywords ***
 
-Execute and Check Success   [Arguments]   ${cmd}
-  ${rc}   ${output}=   Run and Return RC And Output   ${cmd}
-  Should Be Equal As Integers   ${rc}   0   ${output}   False
-  [Return]   ${output}
+Execute and Check Success  [Arguments]  ${cmd}
+  ${rc}  ${output}=  Run and Return RC And Output  ${cmd}
+  Should Be Equal As Integers  ${rc}  0  ${output}  False
+  [Return]  ${output}
+
+Execute clientSRM Command and Check Success  [Arguments]  ${cmd}  ${surl}
+  ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint} -s ${surl}
+  [Return]  ${output}
+
+Execute Curl  [Arguments]  ${cmd}
+  ${output}  Execute and Check Success  curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} ${cmd}
+  [Return]  ${output}

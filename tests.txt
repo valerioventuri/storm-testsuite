@@ -4,11 +4,11 @@ Resource   lib/stormlib.txt
 *** Test Cases ***
 
 Check storm can be pinged
-  Run  clientSRM ping -e ${endpoint}
+  Run  clientSRM ping -e ${srmEndpoint}
 	
 List files in storage area root
-  Run  clientSRM ls -e ${endpoint} -s srm://${endpoint}/${root} -c 1
+  Run  clientSRM ls -e ${srmEndpoint} -s srm://${srmEndpoint}/${root} -c 1
 
 Create directory
-  Run  clientSRM rmdir -e ${endpoint} -s srm://${endpoint}/${root}/testdir
-  Run  clientSRM mkdir -e ${endpoint} -s srm://${endpoint}/${root}/testdir
+  Run  clientSRM rmdir -e ${srmEndpoint} -s srm://${srmEndpoint}/${root}/testdir
+  Run  clientSRM mkdir -e ${srmEndpoint} -s srm://${srmEndpoint}/${root}/testdir

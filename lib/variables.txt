@@ -1,4 +1,9 @@
 *** Variables ***
 
-${endpoint}	omii001-vm04.cnaf.infn.it:8444
-${root}		testers.eu-emi.eu
+${srmEndpoint}	omii001-vm04.cnaf.infn.it:8444
+${davEndpoint}  omii001-vm04.cnaf.infn.it:8443
+${root}	 testers.eu-emi.eu
+
+${usercert}  /home/valerio/.globus/usercert.pem
+${userproxy}  /tmp/x509up_u503
+${trustdir}  /etc/grid-security/certificates
