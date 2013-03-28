@@ -6,7 +6,9 @@ Resource   lib/stormlib.txt
 Check storm can be pinged
   Run  clientSRM ping -e ${endpoint}
 	
-
 List files in storage area root
-  Run  clientSRM ls -e ${endpoint} -s srm:/${endpoint}/${root} -c 1
+  Run  clientSRM ls -e ${endpoint} -s srm://${endpoint}/${root} -c 1
 
+Create directory
+  Run  clientSRM rmdir -e ${endpoint} -s srm://${endpoint}/${root}/testdir
+  Run  clientSRM mkdir -e ${endpoint} -s srm://${endpoint}/${root}/testdir
