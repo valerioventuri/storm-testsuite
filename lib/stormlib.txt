@@ -10,7 +10,11 @@ Execute and Check Success  [Arguments]  ${cmd}
   Should Be Equal As Integers  ${rc}  0  ${output}  False
   [Return]  ${output}
 
-Execute clientSRM Command and Check Success  [Arguments]  ${cmd}  ${surl}
+Execute clientSRM Command  [Arguments]  ${cmd}
+  ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint}
+  [Return]  ${output}
+
+Execute clientSRM Command on Surl  [Arguments]  ${cmd}  ${surl}
   ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint} -s ${surl}
   [Return]  ${output}
 
