@@ -18,20 +18,15 @@ Create directory
 Check double PtG on a file
   ${test_file}  Run  echo "test."`date "+%s"`
 
-  ${output}  Execute clientSRM Command on Surl  PtP  srm://${srmEndpoint}/${root}/${test_file}
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
   ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  Run  sleep 2
+  Should Contain  ${output}  SRM_SUCCESS
 
-  ${output}  Execute clientSRM Command on Surl  pd  srm://${srmEndpoint}/${root}/${test_file} -t ${token}
+  ${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${test_file} -t ${token}
+  Should Contain  ${output}  SRM_SUCCESS
 
-  Execute clientSRM Command on Surl  ptg  srm://${srmEndpoint}/${root}/${test_file}
-  Run  sleep 2
+  ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
+  Should Contain  ${output}  SRM_SUCCESS
 
-  ${output}  Execute clientSRM Command on Surl  ptg  srm://${srmEndpoint}/${root}/${test_file}
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  Run  sleep 2
-
-  ${output}  Execute clientSRM Command on Surl  sptg  srm://${srmEndpoint}/${root}/${test_file} -t ${token}
-
-  Log  ${output}
-  Should Not Contain  ${output}  SRM_FILE_BUSY
+  ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
+  Should Not Contain  ${output}  SRM_FAILURE
