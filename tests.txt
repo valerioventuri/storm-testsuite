@@ -30,3 +30,26 @@ Check double PtG on a file
 
   ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
   Should Not Contain  ${output}  SRM_FAILURE
+
+Check right failure code when invoking PtP/PtP on the same file
+  ${test_file}  Run  echo "test."`date "+%s"`
+
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  Should Contain  ${output}  SRM_SUCCESS
+
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  Log  ${output}
+  Should Contain  ${output}  SRM_FILE_BUSY
+
+Check right failure code when invoking PtP/pd/PtG on the same file
+  ${test_file}  Run  echo "test."`date "+%s"`
+
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  Should Contain  ${output}  SRM_SUCCESS
+  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
+
+  ${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${test_file} -t ${token}
+  Should Contain  ${output}  SRM_SUCCESS
+
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  Should Contain  ${output}  SRM_DUPLICATION_ERROR
