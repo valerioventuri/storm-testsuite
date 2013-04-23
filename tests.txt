@@ -11,83 +11,41 @@ List files in storage area root
   Execute clientSRM Command on Surl  ls  srm://${srmEndpoint}/${root} -c 1
 
 Create directory
-  ${rc}  ${dirName}  Run And Return Rc And Output  echo $RANDOM
-  Execute clientSRM Command on Surl  mkdir  srm://${srmEndpoint}/${root}/${dirname}
-  Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname}
-
+  ${dirName}  Get a unique name
+	Create directory using clientSRM  ${dirName}
+	Remove directory using clientSRM  ${dirName}
+	
 Check double PtG on a file
   ${test_file}  Run  echo "test."`date "+%s"`
-
-  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  Should Contain  ${output}  SRM_SUCCESS
-
-  ${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${test_file} -t ${token}
-  Should Contain  ${output}  SRM_SUCCESS
-
-  ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
-  Should Contain  ${output}  SRM_SUCCESS
-
-  ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
-  Should Not Contain  ${output}  SRM_FAILURE
+  Put without really putting  ${test_file}
+  Prepare to get  ${test_file}
+  Prepare to get  ${test_file}
 
 Check right failure code when invoking PtP/PtP on the same file
   ${test_file}  Run  echo "test."`date "+%s"`
-
-  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
-  Should Contain  ${output}  SRM_SUCCESS
-
+  Prepare to put  ${test_file}
   ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
   Log  ${output}
   Should Contain  ${output}  SRM_FILE_BUSY
 
 Check right failure code when invoking PtP/pd/PtP on the same file
   ${test_file}  Run  echo "test."`date "+%s"`
-
-  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
-  Should Contain  ${output}  SRM_SUCCESS
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-
-  ${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${test_file} -t ${token}
-  Should Contain  ${output}  SRM_SUCCESS
-
+  ${token}  Put without really putting  ${test_file}
   ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
   Should Contain  ${output}  SRM_DUPLICATION_ERROR
 
 Check if StoRM publishes correctly values for used and free space on the BDII
-  ${test_file}  Run  echo "test."`date "+%s"`
-
-  Execute and Check Success  dd if=/dev/urandom of=/tmp/${test_file} bs=1M count=1
-
-  ${output}  Run  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
-  Should Contain  ${output}  No such file or directory
-
-  ${output}  Execute clientSRM Command  gst -e httpg://${srmEndpoint}/ -d TESTERSEUEMIEU_TOKEN
-  ${result}  ${token}=  Should Match Regexp  ${output}  (\".+-.+-.+-.+-.+\")
-  Log   ${token}
-
-  Execute and Check Success  lcg-cp -b --verbose -D srmv2 file:///tmp/${test_file} srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
-
-  ${output}  Execute clientSRM Command  gsm -e httpg://${srmEndpoint}/ -s ${token}
-  ${result}  ${size_before}=  Should Match Regexp  ${output}  unusedSize=(.+)
+  ${test_file}  Create local file
+  Check file does not exists using lcg-utils  ${test_file}
+  Copy file using lcg-utils  ${test_file}  ${test_file}
+  ${size_before}  Get unused size  ${storageAreaToken}
   Log  ${size_before}
-
-  Execute and Check Success  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
-
+	Check file exists using lcg-utils  ${test_file}
   Execute clientSRM Command  rm -e httpg://${srmEndpoint}/ -s srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
-
-  ${output}  Run  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
-  Should Contain  ${output}  No such file or directory
-
-  ${output}  Execute clientSRM Command  gsm -e httpg://${srmEndpoint}/ -s ${token}
-  ${result}  ${size_after}=  Should Match Regexp  ${output}  unusedSize=(.+)
+	Check file does not exists using lcg-utils  ${test_file}
+	${size_after}  Get unused size  ${storageAreaToken}
   Log  ${size_after}
-
   ${diff_size}  Run  echo `expr ${size_after} - ${size_before}`
-  Log  ${diff_size}
-
-  ${file_size}  Run  ls -l /tmp/${test_file} |awk {'print $5'}
-  Log  ${file_size}
-
+  ${file_size}  Run  ls -l /tmp/${test_file} | awk {'print $5'}
   Should be equal  ${file_size}  ${diff_size}
 

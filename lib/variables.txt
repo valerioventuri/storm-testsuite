@@ -3,6 +3,7 @@
 ${srmEndpoint}	omii001-vm04.cnaf.infn.it:8444
 ${davEndpoint}  omii001-vm04.cnaf.infn.it:8443
 ${root}	 testers.eu-emi.eu
+${storageAreaToken}	 TESTERSEUEMIEU_TOKEN
 
 ${usercert}  /home/valerio/.globus/usercert.pem
 ${userproxy}  /tmp/x509up_u503

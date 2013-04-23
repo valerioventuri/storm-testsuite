@@ -2,6 +2,25 @@
 
 Basic library for ripetitive tasks.
 
+## Get a unique name
+
+Create a unique name, to be used when creating directories and files
+
+```bash
+Create directory
+  ${dirName}  Create a unique name
+  Create directory  ${dirName}
+```
+
+## Create a local file
+
+Create a local file
+
+```bash
+${file}  Create local file
+Check file does not exists using lcg-utils  ${file}
+```
+
 ## Execute ClientSRM Command
 
 Execute a clientSRM command. For the commands that does not need additional input, like ping
@@ -10,7 +29,6 @@ Execute a clientSRM command. For the commands that does not need additional inpu
 Ping the service
   Execute ClientSRM Command  ping
 ```
-
 executes a
 
 ```bash
@@ -69,4 +87,55 @@ curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} -X PUT ${file
 ```
 
 and check that the command suceed.
+
+## Create directory using clientSRM
+
+Issues a clientSRM mkdir for creating a directory of a given path.
+
+## Remove directory using clientSRM
+
+Issues a clientSRM rmdir for creating a directory of a given path.
+
+## Prepare to put
+
+Issues a clientSRM ptp.
+
+## Put without really putting
+
+Issues a clientSRM ptp and the subsequent pd, without transfering the file.
+
+## Prepare to get
+
+Issues a clientSRM ptg.
+
+## Get unused size
+
+Get the unused size for a storage area.
+
+
+  
+## Check file exists using lcg-utils
+
+Issues an lgc-ls to check that a file exists
+
+```bash
+	Check file exists using lcg-utils  remotePath
+```
+
+## Check file does not exists using lcg-utils
+
+Issues an lcg-ls and check that a file does not exist
+
+```bash
+	Check file does not exist using lcg-utils  remotePath
+```
+
+## Copy file using lcg-utils
+
+Issues an lcg-cp to copy a file to the SE
+
+```bash
+  Copy file using lcg-utils  localePath  remotePath
+```
+
 
