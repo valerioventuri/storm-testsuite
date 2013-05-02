@@ -1,0 +1,24 @@
+** Settings ***
+
+Library   OperatingSystem
+Resource   variables.txt
+
+*** Keywords ***
+
+List files in directory using lcg_utils  [Arguments]  ${path}
+  ${output}  Run  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${path}
+  [Return]  ${output}
+
+Check file exists using lcg-utils  [Arguments]  ${path}
+  Execute and Check Success  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${path}
+
+Check file does not exists using lcg-utils  [Arguments]  ${path}
+  ${output}  Run  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${path}
+  Should Contain  ${output}  No such file or directory
+
+Copy-out file using lcg-utils  [Arguments]  ${localPath}  ${remotePath}
+  Execute and Check Success  lcg-cp -b --verbose -D srmv2 file:///tmp/${localPath} srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remotePath}
+
+Copy-in file using lcg-utils  [Arguments]  ${remotePath}  ${localPath}
+	Execute and Check Success  lcg-cp -b --verbose -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remotePath} file:///tmp/${localPath}
+

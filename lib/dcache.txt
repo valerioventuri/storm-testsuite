@@ -1,0 +1,25 @@
+
+Library   OperatingSystem
+Resource   variables.txt
+
+*** Keywords ***
+
+Execute dCache srm command  [Arguments]  ${cmd}  ${url}
+  ${output}  Execute and Check Success  srm${cmd} -2 ${url}
+  [Return]  ${output}
+
+Execute dCache srm command and check failure  [Arguments]  ${cmd}  ${url}
+  ${output}  Execute and Check Failure  srm${cmd} -2 ${url}
+  [Return]  ${output}
+
+Ping using dCache client
+  ${output}  Execute dCache srm command  ping  srm://${srmEndpoint}
+  [Return]  ${output}
+
+Create directory using dCache client  [Arguments]  ${dirName}
+  ${output}  Execute dCache srm command  mkdir  srm://${srmEndpoint}/${root}/${dirName}
+  Should Be Empty  ${output}
+
+Try to create directory using dCache client  [Arguments]  ${dirName}
+  ${output}  Execute dCache srm command and check failure  mkdir  srm://${srmEndpoint}/${root}/${dirName}
+  [Return]  ${output}
