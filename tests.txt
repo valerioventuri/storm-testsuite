@@ -2,6 +2,7 @@
 Resource   lib/stormlib.txt
 Resource   lib/dcache.txt
 Resource   lib/lcg_util.txt
+Resource   lib/clientSRM.txt
 
 *** Test Cases ***
 
