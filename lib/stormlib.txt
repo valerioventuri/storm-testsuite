@@ -24,54 +24,6 @@ Create local file
   Execute and Check Success  dd if=/dev/urandom of=/tmp/${name} bs=1M count=1
   [Return]  ${name}
 
-Execute clientSRM Command  [Arguments]  ${cmd}
-  ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint}
-  [Return]  ${output}
-
-Execute clientSRM Command on Surl  [Arguments]  ${cmd}  ${surl}
-  ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint} -s ${surl}
-  [Return]  ${output}
-
 Execute Curl  [Arguments]  ${cmd}
   ${output}  Execute and Check Success  curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} ${cmd}
   [Return]  ${output}
-
-Create directory using clientSRM  [Arguments]  ${dirname}
-  ${output}  Execute clientSRM Command on Surl  mkdir  srm://${srmEndpoint}/${root}/${dirname}
-	Should Contain  ${output}  SRM_SUCCESS
-
-Try to create directory using clientSRM  [Arguments]  ${dirname}
-  ${output}  Execute clientSRM Command on Surl  mkdir  srm://${srmEndpoint}/${root}/${dirname}
-	[Return]  ${output}
-
-List files in directory using clientSRM  [Arguments]  ${path}
-  ${output}  Execute clientSRM Command on Surl  ls  srm://${srmEndpoint}/${root}/${path}  
-  [Return]  ${output}
-
-Remove directory using clientSRM  [Arguments]  ${dirname}
-  ${output}  Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname} -r 1
-  Should Contain  ${output}  SRM_SUCCESS
-
-Prepare to put  [Arguments]  ${path}  ${filename}
-  ${output}  Execute clientSRM Command on Surl  ptp -p  srm://${srmEndpoint}/${root}/${path}/${filename}
-  Should Contain  ${output}  SRM_SUCCESS
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  [Return]  ${token}
-
-Put without really putting  [Arguments]  ${path}  ${filename}
-	${token}  Prepare to put  ${path}  ${filename}
-	${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${path}/${filename} -t ${token}
-  Should Contain  ${output}  SRM_SUCCESS
-
-Prepare to get  [Arguments]  ${filename}
-  ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
-  Should Contain  ${output}  SRM_SUCCESS
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  [Return]  ${token}
-
-Get unused size  [Arguments]  ${storageAreaToken}
-  ${output}  Execute clientSRM Command  gst -e httpg://${srmEndpoint}/ -d ${storageAreaToken}
-  ${result}  ${token}=  Should Match Regexp  ${output}  (\".+-.+-.+-.+-.+\")
-  ${output}  Execute clientSRM Command  gsm -e httpg://${srmEndpoint}/ -s ${token}
-  ${result}  ${unusedSize}=  Should Match Regexp  ${output}  unusedSize=(.+)
-  [Return]  ${unusedSize}
