@@ -1,5 +1,6 @@
 *** Settings ***
 Resource   lib/stormlib.txt
+Resource   lib/clientSRM.txt
 
 *** Test Cases ***
 
