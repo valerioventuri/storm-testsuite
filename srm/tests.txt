@@ -1,0 +1,68 @@
+*** Settings ***
+Resource   lib/stormlib.txt
+Resource   lib/dcache.txt
+Resource   lib/lcg_util.txt
+Resource   lib/clientSRM.txt
+
+*** Test Cases ***
+
+Check double PtG on a file
+  ${test_file}  Run  echo "test."`date "+%s"`
+  Put without really putting  /  ${test_file}
+  Prepare to get  ${test_file}
+  Prepare to get  ${test_file}
+  [Teardown]  Remove file using clientSRM  ${test_file}
+
+Check right failure code when invoking PtP/PtP on the same file
+  ${test_file}  Run  echo "test."`date "+%s"`
+  Prepare to put  /  ${test_file}
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  Log  ${output}
+  Should Contain  ${output}  SRM_FILE_BUSY
+  [Teardown]  Remove file using clientSRM  ${test_file}
+
+Check right failure code when invoking PtP/pd/PtP on the same file
+  ${test_file}  Run  echo "test."`date "+%s"`
+  Put without really putting  /  ${test_file}
+  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  Should Contain  ${output}  SRM_DUPLICATION_ERROR
+  [Teardown]  Remove file using clientSRM  ${test_file}
+
+Check if StoRM publishes correctly values for used and free space on the BDII
+  ${test_file}  Create local file
+  Check file does not exists using lcg-utils  ${test_file}
+  Copy-out file using lcg-utils  ${test_file}  ${test_file}
+  ${size_before}  Get unused size  ${storageAreaToken}
+  Log  ${size_before}
+  Check file exists using lcg-utils  ${test_file}
+  Execute clientSRM Command  rm -e httpg://${srmEndpoint}/ -s srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
+  Check file does not exists using lcg-utils  ${test_file}
+  ${size_after}  Get unused size  ${storageAreaToken}
+  Log  ${size_after}
+  ${diff_size}  Run  echo `expr ${size_after} - ${size_before}`
+  ${file_size}  Run  ls -l /tmp/${test_file} | awk {'print $5'}
+  Should be equal  ${file_size}  ${diff_size}
+
+Copy out a file using lcg-utils
+  ${test_file}  Create local file
+  Check file does not exists using lcg-utils  ${test_file}
+  Copy-out file using lcg-utils  ${test_file}  ${test_file}
+  Copy-in file using lcg-utils  ${test_file}  ${test_file}_copied
+  Execute and check success  diff /tmp/${test_file} /tmp/${test_file}_copied
+  [Teardown]  Remove file using clientSRM  ${test_file}
+
+Prepare to put using clientSRM
+	${fileName}  Get a unique name
+	${output}  ${token}  Prepare to put  /  ${fileName}
+  ${output}  Execute clientSRM Command  sptp -t ${token} -s srm://${srmEndpoint}/${root}///${fileName} 
+  Should Contain  ${output}  SRM_SPACE_AVAILABLE
+  Should Contain  ${output}  srmPrepareToPut successfully handled!
+  [Teardown]  Remove file using clientSRM  ${fileName}
+
+Prepare to put on an existent file using clientSRM
+	${fileName}  Get a unique name
+	Put without really putting  /  ${fileName}
+	${output}  ${token}  Prepare to put  /  ${fileName}
+  Should Contain  ${output}  SRM_DUPLICATION_ERROR
+  Should Contain  ${output}  Cannot srmPut file because it already exists!
+  [Teardown]  Remove file using clientSRM  ${fileName}

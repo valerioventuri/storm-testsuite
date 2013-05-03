@@ -1,0 +1,33 @@
+*** Settings ***
+Resource   lib/stormlib.txt
+Resource   lib/dcache.txt
+Resource   lib/lcg_util.txt
+Resource   lib/clientSRM.txt
+
+*** Test Cases ***
+
+Ping using clientSRM
+  ${output}  Execute clientSRM Command  ping
+  Should contain  ${output}  SRM server successfully contacted
+	
+Ping using the dCache client
+  ${output}  Ping using dCache client
+  Should Contain  ${output}  StoRM
+
+Ping returns backend age
+  ${output}  Execute clientSRM Command  ping
+  Should Match Regexp  ${output}  <BE:.+-.>
+	
+Ping returns a wrong backend age
+  ${output}  Execute clientSRM Command  ping
+  ${matched}  Should Match Regexp  ${output}  <BE:.+>
+  Should Not Contain  ${matched}  age  
+	
+Verify gtp operation by using the StoRM client
+  ${output}  Execute clientSRM Command  gtp
+  Should Contain  ${output}  transferProtocol="file"
+  Should Contain  ${output}  transferProtocol="gsiftp"
+  Should Contain  ${output}  transferProtocol="http"
+  Should Contain  ${output}  transferProtocol="https"
+  Should Contain  ${output}  transferProtocol="rfio"
+  Should Contain  ${output}  transferProtocol="root"

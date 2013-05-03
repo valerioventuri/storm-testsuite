@@ -23,3 +23,19 @@ Create directory using dCache client  [Arguments]  ${dirName}
 Try to create directory using dCache client  [Arguments]  ${dirName}
   ${output}  Execute dCache srm command and check failure  mkdir  srm://${srmEndpoint}/${root}/${dirName}
   [Return]  ${output}
+
+Remove directory using dCache client  [Arguments]  ${dirName}
+  ${output}  Execute dCache srm command  rmdir  srm://${srmEndpoint}/${root}/${dirName}
+  Should Be Empty  ${output}
+
+Try to remove directory using dCache client  [Arguments]  ${dirName}
+  ${output}  Execute dCache srm command and check failure  rmdir  srm://${srmEndpoint}/${root}/${dirName}
+  [Return]  ${output}
+
+Remove file using dCache client [Arguments]  ${path}
+  ${output}  Execute dCache srm command rm  srm://${srmEndpoint}/${root}/${path}
+  Should Contain  ${output}  SRM_SUCCESS
+
+Try to remove file using dCache client  [Arguments]  ${path}
+  ${output}  Execute dCache srm command and check failure  rm  srm://${srmEndpoint}/${root}/${path}
+  [Return]  ${output}

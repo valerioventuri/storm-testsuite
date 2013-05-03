@@ -30,14 +30,27 @@ Remove directory using clientSRM  [Arguments]  ${dirname}
   ${output}  Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname} -r 1
   Should Contain  ${output}  SRM_SUCCESS
 
+Try to remove directory using clientSRM  [Arguments]  ${dirname}
+  ${output}  Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname} -r 1
+  Should Not Contain  ${output}  SRM_SUCCESS
+	[Return]  ${output}
+
+Remove file using clientSRM  [Arguments]  ${path}
+  ${output}  Execute clientSRM Command on Surl  rm  srm://${srmEndpoint}/${root}/${path}
+  Should Contain  ${output}  SRM_SUCCESS
+
+Try to remove file using clientSRM  [Arguments]  ${path}
+  ${output}  Execute clientSRM Command on Surl  rm  srm://${srmEndpoint}/${root}/${path}
+  Should Not Contain  ${output}  SRM_SUCCESS
+	[Return]  ${output}
+
 Prepare to put  [Arguments]  ${path}  ${filename}
   ${output}  Execute clientSRM Command on Surl  ptp -p  srm://${srmEndpoint}/${root}/${path}/${filename}
-  Should Contain  ${output}  SRM_SUCCESS
   ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  [Return]  ${token}
+  [Return]  ${output}  ${token}  
 
 Put without really putting  [Arguments]  ${path}  ${filename}
-	${token}  Prepare to put  ${path}  ${filename}
+	${output}  ${token}  Prepare to put  ${path}  ${filename}
 	${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${path}/${filename} -t ${token}
   Should Contain  ${output}  SRM_SUCCESS
 
