@@ -5,6 +5,7 @@ Resource   lib/clientSRM.txt
 *** Test Cases ***
 
 Prepare to get on an existent file using clientSRM
+	[Tags]  storm-client  ptg
 	${test_file}  Run  echo "test."`date "+%s"`
 	Put without really putting  /  ${test_file}
 	${output}  Execute clientSRM Command on Surl  ptg  srm://${srmEndpoint}/${root}/${test_file}
@@ -15,11 +16,13 @@ Prepare to get on an existent file using clientSRM
 	[Teardown]  Remove file using clientSRM  ${test_file}
 
 Prepare to get on an unexistent file using clientSRM
+	[Tags]  storm-client  ptg
 	${test_file}  Run  echo "test."`date "+%s"`
 	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
 	Should Contain  ${output}  SRM_INVALID_PATH
 
 Release file on an existent file using clientSRM
+	[Tags]  storm-client  rf
 	${test_file}  Run  echo "test."`date "+%s"`
 	Put without really putting  /  ${test_file}
 	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
@@ -30,6 +33,7 @@ Release file on an existent file using clientSRM
 	[Teardown]  Remove file using clientSRM  ${test_file}
 
 Put done an existent file using clientSRM
+	[Tags]  storm-client  pd
 	${test_file}  Run  echo "test."`date "+%s"`
 	${output}  ${token}  Prepare to put  /  ${test_file}
 	Should Contain  ${output}  SRM_SPACE_AVAILABLE
