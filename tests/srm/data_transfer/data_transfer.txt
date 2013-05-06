@@ -1,0 +1,37 @@
+*** Settings ***
+Resource   lib/stormlib.txt
+Resource   lib/clientSRM.txt
+
+*** Test Cases ***
+
+Prepare to get on an existent file using clientSRM
+	${test_file}  Run  echo "test."`date "+%s"`
+	Put without really putting  /  ${test_file}
+	${output}  Execute clientSRM Command on Surl  ptg  srm://${srmEndpoint}/${root}/${test_file}
+	Should Contain  ${output}  SRM_REQUEST_QUEUED
+	${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
+	${output}  Execute clientSRM Command on Surl with Token  ptg -p  srm://${srmEndpoint}/${root}/${test_file}  ${token}
+	Should Contain  ${output}  SRM_SUCCESS
+	[Teardown]  Remove file using clientSRM  ${test_file}
+
+Prepare to get on an unexistent file using clientSRM
+	${test_file}  Run  echo "test."`date "+%s"`
+	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
+	Should Contain  ${output}  SRM_INVALID_PATH
+
+Release file on an existent file using clientSRM
+	${test_file}  Run  echo "test."`date "+%s"`
+	Put without really putting  /  ${test_file}
+	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
+	Should Contain  ${output}  SRM_SUCCESS
+	${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
+	${output}  Execute clientSRM Command on Surl with Token  rf  srm://${srmEndpoint}/${root}/${test_file}  ${token}
+	Should Contain  ${output}  SRM_SUCCESS
+	[Teardown]  Remove file using clientSRM  ${test_file}
+
+Put done an existent file using clientSRM
+	${test_file}  Run  echo "test."`date "+%s"`
+	${output}  ${token}  Prepare to put  /  ${test_file}
+	Should Contain  ${output}  SRM_SPACE_AVAILABLE
+	Put done  /  ${test_file}  ${token}
+	[Teardown]  Remove file using clientSRM  ${test_file}

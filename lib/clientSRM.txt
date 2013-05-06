@@ -13,6 +13,10 @@ Execute clientSRM Command on Surl  [Arguments]  ${cmd}  ${surl}
   ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint} -s ${surl}
   [Return]  ${output}
 
+Execute clientSRM Command on Surl with Token  [Arguments]  ${cmd}  ${surl}  ${token}
+  ${output}  Execute and Check Success  clientSRM ${cmd} -e ${srmEndpoint} -s ${surl} -t ${token}
+  [Return]  ${output}
+
 Create directory using clientSRM  [Arguments]  ${dirname}
   ${output}  Execute clientSRM Command on Surl  mkdir  srm://${srmEndpoint}/${root}/${dirname}
 	Should Contain  ${output}  SRM_SUCCESS
@@ -52,6 +56,10 @@ Prepare to put  [Arguments]  ${path}  ${filename}
 Put without really putting  [Arguments]  ${path}  ${filename}
 	${output}  ${token}  Prepare to put  ${path}  ${filename}
 	${output}  Execute clientSRM Command on Surl  pd -p  srm://${srmEndpoint}/${root}/${path}/${filename} -t ${token}
+  Should Contain  ${output}  SRM_SUCCESS
+
+Put done  [Arguments]  ${path}  ${filename}  ${token}
+  ${output}  Execute clientSRM Command on Surl with token  pd  srm://${srmEndpoint}/${root}/${path}/${filename}  ${token}
   Should Contain  ${output}  SRM_SUCCESS
 
 Prepare to get  [Arguments]  ${filename}
