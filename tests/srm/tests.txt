@@ -66,3 +66,12 @@ Prepare to put on an existent file using clientSRM
   Should Contain  ${output}  SRM_DUPLICATION_ERROR
   Should Contain  ${output}  Cannot srmPut file because it already exists!
   [Teardown]  Remove file using clientSRM  ${fileName}
+
+Prepare to put using a non existent space token
+  [Tags]  regression  ptp
+  [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/282. StoRM used to return the wrong error (SRM_SPACE_LIFETIME_EXPIRED instead of SRM_INVALID_REQUEST) for a sptp when a ptp was given a non existent space token. 
+	${fileName}  Get a unique name
+  ${output}  ${token}  Prepare to put  /  ${fileName} -t whatever
+	${output}  Execute clientSRM Command on Surl  sptp  srm://${srmEndpoint}/${root}///${filename} -t ${token}
+  Should Contain  ${output}  SRM_INVALID_REQUEST
+  Should Contain  ${output}  The provided Space Token does not exists
