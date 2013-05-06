@@ -32,9 +32,9 @@ Try to remove directory using dCache client  [Arguments]  ${dirName}
   ${output}  Execute dCache srm command and check failure  rmdir  srm://${srmEndpoint}/${root}/${dirName}
   [Return]  ${output}
 
-Remove file using dCache client [Arguments]  ${path}
-  ${output}  Execute dCache srm command rm  srm://${srmEndpoint}/${root}/${path}
-  Should Contain  ${output}  SRM_SUCCESS
+Remove file using dCache client  [Arguments]  ${path}
+  ${output}  Execute dCache srm command  rm  srm://${srmEndpoint}/${root}/${path}
+  Should Not Contain  ${output}  SRM_FAILURE
 
 Try to remove file using dCache client  [Arguments]  ${path}
   ${output}  Execute dCache srm command and check failure  rm  srm://${srmEndpoint}/${root}/${path}

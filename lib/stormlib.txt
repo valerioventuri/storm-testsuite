@@ -16,7 +16,7 @@ Execute and Check Failure   [Arguments]   ${cmd}
   [Return]  ${output}
 
 Get a unique name
-  ${name}  Execute and Check Success  echo $RANDOM
+  ${name}  Execute and Check Success  basename `mktemp`
   [Return]  ${name}
 
 Create local file
