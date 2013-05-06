@@ -7,6 +7,7 @@ Resource   lib/clientSRM.txt
 *** Test Cases ***
 
 Check double PtG on a file
+  [Tags]   regression  ptg
   ${test_file}  Run  echo "test."`date "+%s"`
   Put without really putting  /  ${test_file}
   Prepare to get  ${test_file}
@@ -14,6 +15,7 @@ Check double PtG on a file
   [Teardown]  Remove file using clientSRM  ${test_file}
 
 Check right failure code when invoking PtP/PtP on the same file
+  [Tags]   regression  ptp
   ${test_file}  Run  echo "test."`date "+%s"`
   Prepare to put  /  ${test_file}
   ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
@@ -22,6 +24,7 @@ Check right failure code when invoking PtP/PtP on the same file
   [Teardown]  Remove file using clientSRM  ${test_file}
 
 Check right failure code when invoking PtP/pd/PtP on the same file
+  [Tags]   regression  ptp  pd
   ${test_file}  Run  echo "test."`date "+%s"`
   Put without really putting  /  ${test_file}
   ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
@@ -29,6 +32,7 @@ Check right failure code when invoking PtP/pd/PtP on the same file
   [Teardown]  Remove file using clientSRM  ${test_file}
 
 Check if StoRM publishes correctly values for used and free space on the BDII
+  [Tags]  regression
   ${test_file}  Create local file
   Check file does not exists using lcg-utils  ${test_file}
   Copy-out file using lcg-utils  ${test_file}  ${test_file}
@@ -44,6 +48,7 @@ Check if StoRM publishes correctly values for used and free space on the BDII
   Should be equal  ${file_size}  ${diff_size}
 
 Copy out a file using lcg-utils
+  [Tags]  lcg-utils
   ${test_file}  Create local file
   Check file does not exists using lcg-utils  ${test_file}
   Copy-out file using lcg-utils  ${test_file}  ${test_file}
@@ -52,6 +57,7 @@ Copy out a file using lcg-utils
   [Teardown]  Remove file using clientSRM  ${test_file}
 
 Prepare to put using clientSRM
+  [Tags]  regression  ptp
 	${fileName}  Get a unique name
 	${output}  ${token}  Prepare to put  /  ${fileName}
   ${output}  Execute clientSRM Command  sptp -t ${token} -s srm://${srmEndpoint}/${root}///${fileName} 
@@ -60,6 +66,7 @@ Prepare to put using clientSRM
   [Teardown]  Remove file using clientSRM  ${fileName}
 
 Prepare to put on an existent file using clientSRM
+  [Tags]  regression  ptp
 	${fileName}  Get a unique name
 	Put without really putting  /  ${fileName}
 	${output}  ${token}  Prepare to put  /  ${fileName}
