@@ -6,7 +6,7 @@ Resource   lib/clientSRM.txt
 
 Prepare to get on an existent file using clientSRM
 	[Tags]  storm-client  ptg
-	${test_file}  Run  echo "test."`date "+%s"`
+	${test_file}  Get a unique name
 	Put without really putting  /  ${test_file}
 	${output}  Execute clientSRM Command on Surl  ptg  srm://${srmEndpoint}/${root}/${test_file}
 	Should Contain  ${output}  SRM_REQUEST_QUEUED
@@ -17,13 +17,13 @@ Prepare to get on an existent file using clientSRM
 
 Prepare to get on an unexistent file using clientSRM
 	[Tags]  storm-client  ptg
-	${test_file}  Run  echo "test."`date "+%s"`
+	${test_file}  Get a unique name
 	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
 	Should Contain  ${output}  SRM_INVALID_PATH
 
 Release file on an existent file using clientSRM
 	[Tags]  storm-client  rf
-	${test_file}  Run  echo "test."`date "+%s"`
+	${test_file}  Get a unique name
 	Put without really putting  /  ${test_file}
 	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
 	Should Contain  ${output}  SRM_SUCCESS
@@ -34,7 +34,7 @@ Release file on an existent file using clientSRM
 
 Put done an existent file using clientSRM
 	[Tags]  storm-client  pd
-	${test_file}  Run  echo "test."`date "+%s"`
+	${test_file}  Get a unique name
 	${output}  ${token}  Prepare to put  /  ${test_file}
 	Should Contain  ${output}  SRM_SPACE_AVAILABLE
 	Put done  /  ${test_file}  ${token}

@@ -1,0 +1,18 @@
+*** Settings ***
+Resource   lib/stormlib.txt
+Resource   lib/lcg_util.txt
+Resource   lib/clientSRM.txt
+
+*** Test Cases ***
+
+Space token used space is update
+  [Tags]  storm-client  lcg-utils  gst
+  ${size_before}  Get unused size  ${storageAreaToken}
+  Log  ${size_before}
+  ${filename}  Create local file
+  Copy-out file using lcg-utils  ${filename}  ${filename}
+  ${size_after}  Get unused size  ${storageAreaToken}
+  Log  ${size_after}
+  ${diff_size}  Run  echo `expr ${size_before} - ${size_after}`
+  ${file_size}  Run  ls -l /tmp/${filename} | awk {'print $5'}
+  Should be equal  ${file_size}  ${diff_size}
