@@ -69,7 +69,7 @@ Ping the service
 
 ### Execute ClientSRM Command on Surl
 
-Execute a clientSRM command that requries a Surl, like mkdir, rmdir, ptg, etc. Using
+Execute a clientSRM command that requires a Surl, like mkdir, rmdir, ptg, etc. Using
 
 ```bash
 List files in storage area root
@@ -90,6 +90,31 @@ It allows for capturing the output
 Ping the service
   ${output}  Execute ClientSRM Command  on Surl
   Should Contain  ${output}  SRM server successfully contacted
+```
+
+### Execute clientSRM Command on Surl with Token
+
+Execute a clientSRM command that requires a Surl and a Token, like sptg, rf, sptp, pd, etc. Using
+
+```bash
+Put done a file:
+  Execute clientSRM Command on Surl with Token  pd  srm://${srmEndpoint}/${root}  ${token}
+```
+
+executes a
+
+```bash
+# clientSRM pd -e ${srmEndpoint} -s srm://${srmEndpoint}/${root}  -t "${token}"
+```
+
+checking that the command succeded (has zero output).
+
+It allows for capturing the output
+
+```bash
+Put done a file
+  ${output}  Execute ClientSRM Command on Surl with Token  pd  srm://${srmEndpoint}/${root}  ${token}
+  Should Contain  ${output}  SRM_SUCCESS
 ```
 
 ### Create directory using clientSRM
@@ -170,7 +195,7 @@ Ping the service executing a srmping command.
 
 Create a directory executing a srmmkdir command. If the command fails the keyword fails.
 
-## Try to create directory using dCache client
+### Try to create directory using dCache client
 
 Create a directory executing a srmmkdir command. This will not fail if the command does not succeed and returns the output.
 
