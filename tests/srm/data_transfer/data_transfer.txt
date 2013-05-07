@@ -1,6 +1,8 @@
 *** Settings ***
 Resource   lib/stormlib.txt
 Resource   lib/clientSRM.txt
+Resource   lib/globus_util.txt
+Resource   lib/lcg_util.txt
 
 *** Test Cases ***
 
@@ -18,7 +20,7 @@ Prepare to get on an existent file using clientSRM
 Prepare to get on an unexistent file using clientSRM
 	[Tags]  storm-client  ptg
 	${test_file}  Get a unique name
-	${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
+	${output}  ${token}  Prepare to get  ${test_file}
 	Should Contain  ${output}  SRM_INVALID_PATH
 
 Release file on an existent file using clientSRM
@@ -39,3 +41,31 @@ Put done an existent file using clientSRM
 	Should Contain  ${output}  SRM_SPACE_AVAILABLE
 	Put done  /  ${test_file}  ${token}
 	[Teardown]  Remove file using clientSRM  ${test_file}
+
+Test that the SRM service is able to trasfer a file on the SRM endpoint          
+  [Tags]  storm-client                                                           
+  ${test_file}  Create local file                                                
+  ${output}  ${token}  Prepare to put  ${EMPTY}  ${test_file}                    
+  Copy-out file using globus-utils  ${test_file}  ${test_file}                   
+  Put done  ${EMPTY}  ${test_file}  ${token}                                     
+  ${output}  List files in directory using clientSRM  ${test_file}               
+  [Teardown]  Remove file using clientSRM  ${test_file}                          
+
+Check failure when performing a ptp on a file already put                        
+  [Tags]  storm-client                                                           
+  ${test_file}  Create local file                                                
+  ${output}  ${token}  Prepare to put  ${EMPTY}  ${test_file}                    
+  Copy-out file using globus-utils  ${test_file}  ${test_file}                   
+  Put done  ${EMPTY}  ${test_file}  ${token}                                     
+  ${output}  ${token}  Prepare to put  ${EMPTY}  ${test_file}                    
+  Should Contain  ${output}  SRM_FAILURE                                         
+  [Teardown]  Remove file using clientSRM  ${test_file}                          
+
+Test that the SRM service is able to trasfer a file from the SRM endpoint        
+  [Tags]  storm-client                                                           
+  ${test_file}  Create local file                                                
+  Copy-out file using lcg-utils  ${test_file}  ${test_file}                      
+  ${output}  ${token}  Prepare to get  ${test_file}  -T -P gsiftp                
+  ${result}  ${turl}=  Should Match Regexp  ${output}  transferURL=(\".+\")      
+  Copy-in file using gsiftp protocol  ${turl}  ${test_file}                      
+  [Teardown]  Remove file using clientSRM  ${test_file}
