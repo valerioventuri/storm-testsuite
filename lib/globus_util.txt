@@ -1,0 +1,16 @@
+** Settings ***
+
+Library   OperatingSystem
+Resource   variables.txt
+
+*** Keywords ***
+
+Copy-out file using globus-utils  [Arguments]  ${localPath}  ${remotePath}
+  Execute and Check Success  globus-url-copy file:///tmp/${localPath} gsiftp://${globusEndpoint}/storage/${root}/${remotePath}
+
+
+Copy-in file using globus-utils  [Arguments]  ${remotePath}  ${localPath}
+  Execute and Check Success  globus-url-copy  gsiftp://${globusEndpoint}/storage/${root}/${remotePath} file:///tmp/${localPath}
+
+Copy-in file using gsiftp protocol  [Arguments]  ${turl}  ${localPath}
+  Execute and Check Success  globus-url-copy ${turl} file:///tmp/${localPath}
