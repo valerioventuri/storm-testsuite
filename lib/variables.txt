@@ -2,6 +2,8 @@
 
 ${srmEndpoint}	omii001-vm04.cnaf.infn.it:8444
 ${davEndpoint}  omii001-vm04.cnaf.infn.it:8443
+${globusEndpoint}  omii001-vm04.cnaf.infn.it:2811
+
 ${root}	 testers.eu-emi.eu
 ${storageAreaToken}	 TESTERSEUEMIEU_TOKEN
 
