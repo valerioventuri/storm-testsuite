@@ -6,7 +6,7 @@ Resource   lib/clientSRM.txt
 *** Test Cases ***
 
 Space token used space is update
-  [Tags]  storm-client  lcg-utils  gst
+  [Tags]  storm-client  lcg-utils  gst  regression
   ${size_before}  Get unused size  ${storageAreaToken}
   Log  ${size_before}
   ${filename}  Create local file
