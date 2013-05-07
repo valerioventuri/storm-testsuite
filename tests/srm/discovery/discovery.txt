@@ -31,3 +31,11 @@ Verify gtp operation by using the StoRM client
   Should Contain  ${output}  transferProtocol="https"
   Should Contain  ${output}  transferProtocol="rfio"
   Should Contain  ${output}  transferProtocol="root"
+
+Verify asynch request with non-ascii characters
+  [Tags]  storm-client  ping  regression
+  ${filename}  catenate  Get a unique name  èèèè
+  ${output}  Execute clientSRM Command on Surl  ls -c 1  ${filename}
+  Should Not Contain  ${output}  SRM_SUCCESS
+  ${output}  Execute clientSRM Command  ping
+  Should contain  ${output}  SRM server successfully contacted
