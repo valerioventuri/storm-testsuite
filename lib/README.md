@@ -139,6 +139,14 @@ Issues a clientSRM ptp.
 
 Issues a clientSRM ptp and the subsequent pd, without transfering the file.
 
+### Put done
+
+Issues a ClientSRM pd on file ${path}/${filename} using a specified ${token} and check success.
+
+```bash
+Put done  ${path}  ${filename}  ${token}
+```
+
 ### Prepare to get
 
 Issues a clientSRM ptg.
