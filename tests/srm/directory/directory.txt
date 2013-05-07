@@ -80,6 +80,14 @@ List files in an existing directory
   Should Contain  ${output}  ${fileName}
   [Teardown]  Remove directory using clientSRM  ${dirName}
 
+Check if a clientSRM ls on an existent surl works
+  [Tags]  storm-client  ls
+  ${filename}  Get a unique name
+  Put without really putting  /  ${filename}
+  ${output}  Execute clientSRM Command on Surl  ls  srm://${srmEndpoint}/${root}/${filename} -c 1
+  Should Contain  ${output}  SRM_SUCCESS
+  [Teardown]  Remove file using clientSRM  ${filename}
+
 Check if a clientSRM ls on a non-existent file fails
   [Tags]  storm-client  ls
   ${test_file}  Get a unique name
