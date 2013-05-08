@@ -23,6 +23,15 @@ ${file}  Create local file
 Check file does not exists using lcg-utils  ${file}
 ```
 
+### Create local file with checksum that starts with zero
+
+Create a local file with a random name under /tmp with checksum value that starts with '0'.
+
+```bash
+${file}  Create local file with checksum that starts with zero
+Check file does not exists using lcg-utils  ${file}
+```
+
 ### Execute Curl
 
 Execute curl using the users proxy as certificate. Using
@@ -131,6 +140,10 @@ Issues a clientSRM rmdir for creating a directory of a given path.
 
 ### List files in directory using clientSRM
 
+### Detailed Ls on resource using clientSRM
+
+Issues a clientSRM ls with -l option of a given path
+
 ### Prepare to put
 
 Issues a clientSRM ptp.
@@ -191,6 +204,14 @@ Issues an lcg-cp to copy a file from a StoRM instance.
 
 ```bash
   Copy-in file using lcg-utils  localePath  remotePath
+```
+
+### Copy file using lcg-utils
+
+Issues an lcg-cp to copy a file from a remote source path to another remote destination path.
+
+```bash
+  Copy file using lcg-utils  remoteSrcPath  remoteDestPath
 ```
 
 ## globus-utils based keywords
