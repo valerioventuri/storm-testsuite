@@ -22,3 +22,6 @@ Copy-out file using lcg-utils  [Arguments]  ${localPath}  ${remotePath}
 Copy-in file using lcg-utils  [Arguments]  ${remotePath}  ${localPath}
 	Execute and Check Success  lcg-cp -b --verbose -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remotePath} file:///tmp/${localPath}
 
+Copy file using lcg-utils  [Arguments]  ${remoteSrcPath}  ${remoteDestPath}
+  ${output}  Execute and Check Success  lcg-cp -b --verbose -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remoteSrcPath} srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remoteDestPath}
+  [Return]  ${output}

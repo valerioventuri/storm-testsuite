@@ -69,3 +69,19 @@ Test that the SRM service is able to trasfer a file from the SRM endpoint
   ${result}  ${turl}=  Should Match Regexp  ${output}  transferURL=(\".+\")
   Copy-in file using gsiftp protocol  ${turl}  ${test_file}
   [Teardown]  Remove file using clientSRM  ${test_file}
+
+Check lcg-cp computed checksum in case it start with zero
+  [Tags]  storm-client  lcg-util  regression  cp
+  ${filename}  Create local file with checksum that starts with zero
+  Copy-out file using lcg-utils  ${filename}  ${filename}
+  ${output}  Detailed Ls on resource using clientSRM  ${filename}
+  ${result}  ${b_checksum}=  Should Match Regexp  ${output}  checkSumValue=(\".+\")
+  Log  ${b_checksum}
+  ${filename2}  Get a unique name
+  ${output}  Copy file using lcg-utils  ${filename}  ${filename2}
+  ${output}  Detailed Ls on resource using clientSRM  ${filename2}
+  ${result}  ${a_checksum}=  Should Match Regexp  ${output}  checkSumValue=(\".+\")
+  Log  ${a_checksum}
+  Should be equal  ${b_checksum}  ${a_checksum}
+  [Teardown]  Remove file using clientSRM  ${filename}
+  Remove file using clientSRM  ${filename2}

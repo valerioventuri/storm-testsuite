@@ -24,6 +24,11 @@ Create local file
   Execute and Check Success  dd if=/dev/urandom of=/tmp/${name} bs=1M count=1
   [Return]  ${name}
 
+Create local file with checksum that starts with zero
+  ${name}  Get a unique name
+  Execute and Check Success  echo "a" > /tmp/${name}
+  [Return]  ${name}
+
 Execute Curl  [Arguments]  ${cmd}
   ${output}  Execute and Check Success  curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} ${cmd}
   [Return]  ${output}

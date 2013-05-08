@@ -30,6 +30,10 @@ List files in directory using clientSRM  [Arguments]  ${path}
   ${output}  Execute clientSRM Command on Surl  ls  srm://${srmEndpoint}/${root}/${path}  
   [Return]  ${output}
 
+Detailed Ls on resource using clientSRM  [Arguments]  ${path}
+  ${output}  Execute clientSRM Command on Surl  ls -l -c 1  srm://${srmEndpoint}/${root}/${path}
+  [Return]  ${output}
+
 Remove directory using clientSRM  [Arguments]  ${dirname}
   ${output}  Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname} -r 1
   Should Contain  ${output}  SRM_SUCCESS
