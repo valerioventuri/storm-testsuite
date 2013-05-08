@@ -193,6 +193,32 @@ Issues an lcg-cp to copy a file from a StoRM instance.
   Copy-in file using lcg-utils  localePath  remotePath
 ```
 
+## globus-utils based keywords
+
+### Copy-out file using globus-utils
+
+Issues a globus-url-copy to copy a file to a StoRM instance.
+
+```bash
+  Copy-out file using globus-utils  localPath  remotePath
+```
+
+### Copy-in file using globus-utils
+
+Issues a globus-url-copy to copy a file from a StoRM instance.
+
+```bash
+  Copy-in file using globus-utils  localPath  remotePath
+```
+
+### Copy-in file using gsiftp protocol
+
+Issues a globus-url-copy to copy a file from a StoRM instance by using its TURL and gsiftp protocol.
+
+```bash
+  Copy-in file using gsiftp protocol  turl  localPath
+```
+
 ## dCache srm client based keywords
 
 ### Ping using dCache client

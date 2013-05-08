@@ -32,4 +32,4 @@ For a current limitation, the testsuite currently needs a voms proxy for the tes
 
 Execute the Robot Framework command-line passing the storm frontend endpoint and the root of the storage area  
         
-    pybot --variable srmEndpoint:omii001-vm04.cnaf.infn.it:8444 --davEndpoint:omii001-vm04.cnaf.infn.it:8443 --variable root:testers.eu-emi.eu --pythonpath lib tests.txt
+    pybot --variable srmEndpoint:omii001-vm04.cnaf.infn.it:8444 --variable davEndpoint:omii001-vm04.cnaf.infn.it:8443 --variable globusEndpoint:omii001-vm04.cnaf.infn.it:2811 --variable root:testers.eu-emi.eu --pythonpath lib tests.txt
