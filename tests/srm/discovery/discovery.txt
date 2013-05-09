@@ -7,23 +7,28 @@ Resource   lib/clientSRM.txt
 *** Test Cases ***
 
 Ping using clientSRM
+  [Tags]  ping  storm-client
   ${output}  Execute clientSRM Command  ping
   Should contain  ${output}  SRM server successfully contacted
 	
 Ping using the dCache client
+  [Tags]  ping  dcache-client
   ${output}  Ping using dCache client
   Should Contain  ${output}  StoRM
 
 Ping returns backend age
+  [Tags]  ping  storm-client
   ${output}  Execute clientSRM Command  ping
   Should Match Regexp  ${output}  <BE:.+-.>
 	
 Ping returns a wrong backend age
+  [Tags]  ping  storm-client
   ${output}  Execute clientSRM Command  ping
   ${matched}  Should Match Regexp  ${output}  <BE:.+>
   Should Not Contain  ${matched}  age  
 	
 Verify gtp operation by using the StoRM client
+  [Tags]  gtp  storm-client
   ${output}  Execute clientSRM Command  gtp
   Should Contain  ${output}  transferProtocol="file"
   Should Contain  ${output}  transferProtocol="gsiftp"
