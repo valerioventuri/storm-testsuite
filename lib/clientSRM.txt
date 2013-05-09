@@ -74,6 +74,19 @@ Prepare to get  [Arguments]  ${filename}  ${extraParams}=${EMPTY}
 Get unused size  [Arguments]  ${storageAreaToken}
   ${output}  Execute clientSRM Command  gst -e httpg://${srmEndpoint}/ -d ${storageAreaToken}
   ${result}  ${token}=  Should Match Regexp  ${output}  (\".+-.+-.+-.+-.+\")
-  ${output}  Execute clientSRM Command  gsm -e httpg://${srmEndpoint}/ -s ${token}
+  ${output}  Get space metadata  ${token}
   ${result}  ${unusedSize}=  Should Match Regexp  ${output}  unusedSize=(.+)
   [Return]  ${unusedSize}
+
+Get space metadata  [Arguments]  ${token}
+  ${output}  Execute clientSRM Command  gsm -e httpg://${srmEndpoint}/ -s ${token}
+  [Return]  ${output}
+
+Reserve space
+  ${output}  Execute clientSRM Command  rs -e httpg://${srmEndpoint}/ -a 10 -b 5 -r 0,0
+  ${result}  ${token}=  Should Match Regexp  ${output}  (\".+-.+-.+-.+-.+\")
+  [Return]  ${token}
+
+Release space  [Arguments]  ${token}
+  ${output}  Execute clientSRM Command  rsp -e httpg://${srmEndpoint}/ -t ${token} -f 1
+  [Return]  ${output}
