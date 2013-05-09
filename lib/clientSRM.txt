@@ -52,8 +52,8 @@ Try to remove file using clientSRM  [Arguments]  ${path}
   Should Not Contain  ${output}  SRM_SUCCESS
 	[Return]  ${output}
 
-Prepare to put  [Arguments]  ${path}  ${filename}
-  ${output}  Execute clientSRM Command on Surl  ptp -p  srm://${srmEndpoint}/${root}/${path}/${filename}
+Prepare to put  [Arguments]  ${path}  ${filename}  ${extraParams}=${EMPTY}
+  ${output}  Execute clientSRM Command on Surl  ptp -p ${extraParams}  srm://${srmEndpoint}/${root}/${path}/${filename}
   ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
   [Return]  ${output}  ${token}  
 
