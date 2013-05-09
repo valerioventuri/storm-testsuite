@@ -6,6 +6,7 @@ Resource   lib/clientSRM.txt
 *** Test Cases ***
 
 Space token used space is update
+  [Documentation] Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/109. Given a Space Token ST and a SURL that resides on ST pointing to a not existent file, verify that inspecting the unused space of the ST before and after a non-empty file has been stored on the SURL, the ST used space value is updated accordingly to the size of the new file.
   [Tags]  storm-client  lcg-utils  gst  regression
   ${size_before}  Get unused size  ${storageAreaToken}
   Log  ${size_before}

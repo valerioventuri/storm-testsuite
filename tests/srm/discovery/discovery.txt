@@ -10,7 +10,7 @@ Ping using clientSRM
   [Tags]  ping  storm-client
   ${output}  Execute clientSRM Command  ping
   Should contain  ${output}  SRM server successfully contacted
-	
+
 Ping using the dCache client
   [Tags]  ping  dcache-client
   ${output}  Ping using dCache client
@@ -38,6 +38,7 @@ Verify gtp operation by using the StoRM client
   Should Contain  ${output}  transferProtocol="root"
 
 Verify asynch request with non-ascii characters
+  [Documentation] Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/137. Given a StoRM endpoint, verify that an SRM asynchronous call providing a string parameter containing non ASCII characters does not put StoRM Frontend offline.
   [Tags]  storm-client  ping  regression
   ${filename}  catenate  Get a unique name  èèèè
   ${output}  Execute clientSRM Command on Surl  ls -c 1  ${filename}
