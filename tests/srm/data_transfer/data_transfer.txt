@@ -85,3 +85,9 @@ Check lcg-cp computed checksum in case it start with zero
   Should be equal  ${b_checksum}  ${a_checksum}
   [Teardown]  Remove file using clientSRM  ${filename}
   Remove file using clientSRM  ${filename2}
+
+Test lcg-cp out
+  [Tags]  lcg-utils  cp
+  ${filename}  Create local file
+  Copy-out file using lcg-utils  ${filename}  ${filename}
+  [Teardown]  Remove file using clientSRM  ${filename}
