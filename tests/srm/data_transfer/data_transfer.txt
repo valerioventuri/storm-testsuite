@@ -91,3 +91,9 @@ Test lcg-cp out
   ${filename}  Create local file
   Copy-out file using lcg-utils  ${filename}  ${filename}
   [Teardown]  Remove file using clientSRM  ${filename}
+
+Check ptg fails when trying to get an unexistent file
+  [Tags]  storm-client  ptg
+  ${test_file}  Get a unique name
+  ${output}  ${token}  Prepare to get  ${test_file}
+  Should Contain  ${output}  SRM_FAILURE
