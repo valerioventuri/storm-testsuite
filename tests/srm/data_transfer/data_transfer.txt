@@ -92,3 +92,10 @@ Test lcg-cp out
   ${filename}  Create local file
   Copy-out file using lcg-utils  ${filename}  ${filename}
   [Teardown]  Remove file using clientSRM  ${filename}
+
+Check if a ptp on an unexistant file with a wrong protocol return the right error message
+  [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/127
+  [Tags]  storm-client  regression
+  ${test_file}  Get a unique name 
+  ${output}  ${token}  Prepare to put  /  ${test_file}  -T -P unknown_protocol
+  Should Contain  ${output}  SRM_NOT_SUPPORTED
