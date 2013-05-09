@@ -16,3 +16,13 @@ Space token used space is update
   ${diff_size}  Run  echo `expr ${size_before} - ${size_after}`
   ${file_size}  Run  ls -l /tmp/${filename} | awk {'print $5'}
   Should be equal  ${file_size}  ${diff_size}
+
+Check a srmGetSpaceMetadata call succedes when a valid Space Token not associated to a Storage Area is given
+  [Tags]  storm-client  gsm  regression
+  [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/277 Storm failed with "SRM_INTERNAL_ERROR" and "Storage Space not initialized yet" as explaination. It must succede since it does not needs to be initialized.
+  ${token}  Reserve space
+  ${output}  Get space metadata  ${token}
+  Should Contain  ${output}  SRM_SUCCESS  
+  ${output}  Release space  ${token}
+  Should Contain  ${output}  SRM_SUCCESS
+ 
