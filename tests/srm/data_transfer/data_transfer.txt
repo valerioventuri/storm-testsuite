@@ -130,19 +130,3 @@ Check file copy in/out using lcg-utils, use dcache-client to create/remove dir a
   Remove directory using dCache client  ${dirName}
   ${output}  Try to remove directory using dCache client  ${dirName}  
   Should Contain  ${output}  SRM_INVALID_PATH
-
-#def ts_cw(conf, ifn, dfn, bifn, uid, lfn):
-#    s = unittest.TestSuite()
-#    s.addTest(utilities.UtilitiesTest('test_dd',conf, ifn, bifn, uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_lcg_ls_unexist_file',conf, ifn, dfn,bifn, uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_dcache_mkdir',conf, ifn, dfn, bifn,uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_dcache_mkdir_exist_dir',conf, ifn,dfn, bifn, uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_lcg_ls_dir',conf, ifn, dfn, bifn, uid,lfn))
-#    s.addTest(atomics.AtomicsTest('test_lcg_cp_out',conf, ifn, dfn, bifn, uid,lfn))
-#    s.addTest(atomics.AtomicsTest('test_lcg_ls_file',conf, ifn, dfn, bifn,uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_lcg_cp_in',conf, ifn, dfn, bifn, uid,lfn))
-#    s.addTest(atomics.AtomicsTest('test_dcache_rm_file',conf, ifn, dfn, bifn,uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_dcache_rm_unexist_file',conf, ifn,dfn, bifn, uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_dcache_rm_dir',conf, ifn, dfn, bifn,uid, lfn))
-#    s.addTest(atomics.AtomicsTest('test_dcache_rm_unexist_dir',conf, ifn, dfn,bifn, uid, lfn))
-#    s.addTest(utilities.UtilitiesTest('test_rm_lf',conf, ifn, bifn, uid, lfn))
