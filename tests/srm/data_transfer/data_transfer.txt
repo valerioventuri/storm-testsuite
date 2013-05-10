@@ -3,6 +3,7 @@ Resource   lib/stormlib.txt
 Resource   lib/clientSRM.txt
 Resource   lib/globus_util.txt
 Resource   lib/lcg_util.txt
+Resource   lib/dcache.txt
 
 *** Test Cases ***
 
@@ -99,3 +100,49 @@ Check if a ptp on an unexistant file with a wrong protocol return the right erro
   ${test_file}  Get a unique name 
   ${output}  ${token}  Prepare to put  /  ${test_file}  -T -P unknown_protocol
   Should Contain  ${output}  SRM_NOT_SUPPORTED
+
+Check a file is correctly transferred out, re-transferred in and deleted with dcache client
+  [Tags]  lcg-utils  dcache-client
+  ${filename}  Create local file
+  Copy-out file using lcg-utils  ${filename}  ${filename}
+  Copy-in file using lcg-utils  ${filename}  ${filename}
+  Remove file using dCache client  ${filename}
+  
+
+Check file copy in/out using lcg-utils, use dcache-client to create/remove dir and file  
+  [Tags]  lcg-utils  dcache-client
+  ${filename}  Create local file
+  ${output}  List files in directory using lcg_utils  ${filename}
+  Should Contain  ${output}  No such file or directory
+  ${dirName}  Get a unique name   
+  Create directory using dCache client  ${dirName}
+  ${output}  Try to create directory using dCache client  ${dirName}
+  Should Contain  ${output}  SRM_DUPLICATION_ERROR
+  ${output}  List files in directory using lcg_utils  ${dirName}
+  Should Not Contain  ${output}  SRM_INVALID_PATH
+  Copy-out file using lcg-utils  ${filename}  ${dirName}/${filename}
+  ${output}  List files in directory using lcg_utils  ${dirName}/${filename} 
+  Should Not Contain  ${output}  SRM_INVALID_PATH
+  Copy-in file using lcg-utils  ${dirName}/${filename}  ${filename}
+  Remove file using dCache client  ${dirName}/${filename}
+  ${output}  Try to remove file using dCache client  ${dirName}/${filename}
+  Should Contain  ${output}  SRM_FAILURE
+  Remove directory using dCache client  ${dirName}
+  ${output}  Try to remove directory using dCache client  ${dirName}  
+  Should Contain  ${output}  SRM_INVALID_PATH
+
+#def ts_cw(conf, ifn, dfn, bifn, uid, lfn):
+#    s = unittest.TestSuite()
+#    s.addTest(utilities.UtilitiesTest('test_dd',conf, ifn, bifn, uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_lcg_ls_unexist_file',conf, ifn, dfn,bifn, uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_dcache_mkdir',conf, ifn, dfn, bifn,uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_dcache_mkdir_exist_dir',conf, ifn,dfn, bifn, uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_lcg_ls_dir',conf, ifn, dfn, bifn, uid,lfn))
+#    s.addTest(atomics.AtomicsTest('test_lcg_cp_out',conf, ifn, dfn, bifn, uid,lfn))
+#    s.addTest(atomics.AtomicsTest('test_lcg_ls_file',conf, ifn, dfn, bifn,uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_lcg_cp_in',conf, ifn, dfn, bifn, uid,lfn))
+#    s.addTest(atomics.AtomicsTest('test_dcache_rm_file',conf, ifn, dfn, bifn,uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_dcache_rm_unexist_file',conf, ifn,dfn, bifn, uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_dcache_rm_dir',conf, ifn, dfn, bifn,uid, lfn))
+#    s.addTest(atomics.AtomicsTest('test_dcache_rm_unexist_dir',conf, ifn, dfn,bifn, uid, lfn))
+#    s.addTest(utilities.UtilitiesTest('test_rm_lf',conf, ifn, bifn, uid, lfn))

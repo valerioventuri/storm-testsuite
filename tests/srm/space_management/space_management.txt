@@ -26,4 +26,10 @@ Check a srmGetSpaceMetadata call succedes when a valid Space Token not associate
   Should Contain  ${output}  SRM_SUCCESS  
   ${output}  Release space  ${token}
   Should Contain  ${output}  SRM_SUCCESS
- 
+
+Check a GetSpaceMetadata succedes when using a proxy without voms extensions
+  [Tags]  storm-client  gsm  regression
+  [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/189
+  ${token}  Get space token  
+  ${output}  Get space metadata  ${token}
+  Should Contain  ${output}  SRM_SUCCESS
