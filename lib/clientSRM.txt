@@ -90,3 +90,8 @@ Reserve space
 Release space  [Arguments]  ${token}
   ${output}  Execute clientSRM Command  rsp -e httpg://${srmEndpoint}/ -t ${token} -f 1
   [Return]  ${output}
+
+Get space token
+  ${output}  Execute clientSRM Command  gst -v ES -e httpg://${srmEndpoint} -d ${storageAreaToken}
+  ${result}  ${token}=  Should Match Regexp  ${output}  (\".+-.+-.+-.+-.+\")
+  [Return]  ${token}
