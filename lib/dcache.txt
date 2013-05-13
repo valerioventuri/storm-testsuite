@@ -16,26 +16,26 @@ Ping using dCache client
   ${output}  Execute dCache srm command  ping  srm://${srmEndpoint}
   [Return]  ${output}
 
-Create directory using dCache client  [Arguments]  ${dirName}
-  ${output}  Execute dCache srm command  mkdir  srm://${srmEndpoint}/${root}/${dirName}
+Create directory using dCache client  [Arguments]  ${storageArea}  ${dirName}
+  ${output}  Execute dCache srm command  mkdir  srm://${srmEndpoint}/${storageArea}/${dirName}
   Should Be Empty  ${output}
 
-Try to create directory using dCache client  [Arguments]  ${dirName}
-  ${output}  Execute dCache srm command and check failure  mkdir  srm://${srmEndpoint}/${root}/${dirName}
+Try to create directory using dCache client  [Arguments]  ${storageArea}  ${dirName}
+  ${output}  Execute dCache srm command and check failure  mkdir  srm://${srmEndpoint}/${storageArea}/${dirName}
   [Return]  ${output}
 
-Remove directory using dCache client  [Arguments]  ${dirName}
-  ${output}  Execute dCache srm command  rmdir  srm://${srmEndpoint}/${root}/${dirName}
+Remove directory using dCache client  [Arguments]  ${storageArea}  ${dirName}
+  ${output}  Execute dCache srm command  rmdir  srm://${srmEndpoint}/${storageArea}/${dirName}
   Should Be Empty  ${output}
 
-Try to remove directory using dCache client  [Arguments]  ${dirName}
-  ${output}  Execute dCache srm command and check failure  rmdir  srm://${srmEndpoint}/${root}/${dirName}
+Try to remove directory using dCache client  [Arguments]  ${storageArea}  ${dirName}
+  ${output}  Execute dCache srm command and check failure  rmdir  srm://${srmEndpoint}/${storageArea}/${dirName}
   [Return]  ${output}
 
-Remove file using dCache client  [Arguments]  ${path}
+Remove file using dCache client  [Arguments]  ${storageArea}  ${path}
   ${output}  Execute dCache srm command  rm  srm://${srmEndpoint}/${root}/${path}
   Should Not Contain  ${output}  SRM_FAILURE
 
-Try to remove file using dCache client  [Arguments]  ${path}
-  ${output}  Execute dCache srm command and check failure  rm  srm://${srmEndpoint}/${root}/${path}
+Try to remove file using dCache client  [Arguments]  ${storageArea}  ${path}
+  ${output}  Execute dCache srm command and check failure  rm  srm://${srmEndpoint}/${storageArea}/${path}
   [Return]  ${output}

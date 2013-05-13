@@ -1,49 +1,57 @@
 *** Settings ***
 Resource   lib/stormlib.txt
+Resource   lib/clientSRM.txt
 Resource   lib/dcache.txt
 Resource   lib/lcg_util.txt
-Resource   lib/clientSRM.txt
+Resource   lib/credentials.txt
+Suite Setup       Create proxies  ${root}
+Suite Teardown    Delete proxies
 
 *** Test Cases ***
 
 Check double PtG on a file
-  [Tags]   regression  ptg
-  ${fileName}  Get a unique name
-  Put without really putting  /  ${fileName}
-  ${output}  Prepare to get  ${fileName}
-  Should Contain  ${output}  SRM_SUCCESS
-  ${output}  Prepare to get  ${fileName}
-  Should Contain  ${output}  SRM_SUCCESS
-  [Teardown]  Remove file using clientSRM  ${fileName}
+  [Tags]  regression  ptg
+  ${test_file}  Get a unique name
+  Put without really putting using clientSRM  ${root}  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}  -p
+  Should Contain  ${output}  SRM_FILE_PINNED
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}  -p
+  Should Contain  ${output}  SRM_FILE_PINNED
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Check right failure code when invoking PtP/PtP on the same file
   [Tags]   regression  ptp
-  ${test_file}  Run  echo "test."`date "+%s"`
-  Prepare to put  /  ${test_file}
-  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  ${test_file}  Get a unique name
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
+  Should Contain  ${output}  SRM_SPACE_AVAILABLE
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
   Log  ${output}
   Should Contain  ${output}  SRM_FILE_BUSY
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Check right failure code when invoking PtP/pd/PtP on the same file
   [Tags]   regression  ptp  pd
-  ${test_file}  Run  echo "test."`date "+%s"`
-  Put without really putting  /  ${test_file}
-  ${output}  Execute clientSRM Command on Surl  PtP -p  srm://${srmEndpoint}/${root}/${test_file}
+  ${test_file}  Get a unique name
+  Put without really putting using clientSRM  ${root}  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
   Should Contain  ${output}  SRM_DUPLICATION_ERROR
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Check if StoRM publishes correctly values for used and free space on the BDII
   [Tags]  regression
   ${test_file}  Create local file
-  Check file does not exists using lcg-utils  ${test_file}
-  Copy-out file using lcg-utils  ${test_file}  ${test_file}
-  ${size_before}  Get unused size  ${storageAreaToken}
+  ${surl}  Build surl  ${root}  ${test_file}
+  Check file does not exists using lcg-utils  ${surl}
+  Copy-out file using lcg-utils  ${test_file}  ${surl}
+  ${size_before}  Get unused size using clientSRM  ${storageAreaToken}
   Log  ${size_before}
-  Check file exists using lcg-utils  ${test_file}
-  Execute clientSRM Command  rm -e httpg://${srmEndpoint}/ -s srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${test_file}
-  Check file does not exists using lcg-utils  ${test_file}
-  ${size_after}  Get unused size  ${storageAreaToken}
+  Check file exists using lcg-utils  ${surl}
+  Perform rm using clientSRM  ${surl}
+  Check file does not exists using lcg-utils  ${surl}
+  ${size_after}  Get unused size using clientSRM  ${storageAreaToken}
   Log  ${size_after}
   ${diff_size}  Run  echo `expr ${size_after} - ${size_before}`
   ${file_size}  Run  ls -l /tmp/${test_file} | awk {'print $5'}
@@ -52,35 +60,39 @@ Check if StoRM publishes correctly values for used and free space on the BDII
 Copy out a file using lcg-utils
   [Tags]  lcg-utils
   ${test_file}  Create local file
-  Check file does not exists using lcg-utils  ${test_file}
-  Copy-out file using lcg-utils  ${test_file}  ${test_file}
-  Copy-in file using lcg-utils  ${test_file}  ${test_file}_copied
+  ${surl}  Build surl  ${root}  ${test_file}
+  Check file does not exists using lcg-utils  ${surl}
+  Copy-out file using lcg-utils  ${test_file}  ${surl}
+  Copy-in file using lcg-utils  ${surl}  ${test_file}_copied
   Execute and check success  diff /tmp/${test_file} /tmp/${test_file}_copied
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Prepare to put using clientSRM
   [Tags]  regression  ptp
-	${fileName}  Get a unique name
-	${output}  ${token}  Prepare to put  /  ${fileName}
-  ${output}  Execute clientSRM Command  sptp -t ${token} -s srm://${srmEndpoint}/${root}///${fileName} 
+  ${filename}  Get a unique name
+  ${surl}  Build surl  ${root}  ${filename}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
+  ${output}  Perform sptp using clientSRM  ${surl}  ${token}
   Should Contain  ${output}  SRM_SPACE_AVAILABLE
   Should Contain  ${output}  srmPrepareToPut successfully handled!
-  [Teardown]  Remove file using clientSRM  ${fileName}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Prepare to put on an existent file using clientSRM
   [Tags]  regression  ptp
-	${fileName}  Get a unique name
-	Put without really putting  /  ${fileName}
-	${output}  ${token}  Prepare to put  /  ${fileName}
+  ${filename}  Get a unique name
+  ${surl}  Build surl  ${root}  ${filename}
+  Put without really putting using clientSRM  ${root}  ${filename}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
   Should Contain  ${output}  SRM_DUPLICATION_ERROR
   Should Contain  ${output}  Cannot srmPut file because it already exists!
-  [Teardown]  Remove file using clientSRM  ${fileName}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Prepare to put using a non existent space token
   [Tags]  regression  ptp
   [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/282. StoRM used to return the wrong error (SRM_SPACE_LIFETIME_EXPIRED instead of SRM_INVALID_REQUEST) for a sptp when a ptp was given a non existent space token. 
-	${fileName}  Get a unique name
-  ${output}  ${token}  Prepare to put  /  ${fileName} -t whatever
-	${output}  Execute clientSRM Command on Surl  sptp  srm://${srmEndpoint}/${root}///${filename} -t ${token}
+  ${filename}  Get a unique name
+  ${surl}  Build surl  ${root}  ${filename}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p -t whatever
+  ${output}  Perform sptp using clientSRM  ${surl}  ${token}
   Should Contain  ${output}  SRM_INVALID_REQUEST
   Should Contain  ${output}  The provided Space Token does not exists

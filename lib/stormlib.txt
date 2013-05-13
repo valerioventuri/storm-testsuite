@@ -32,3 +32,15 @@ Create local file with checksum that starts with zero
 Execute Curl  [Arguments]  ${cmd}
   ${output}  Execute and Check Success  curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} ${cmd}
   [Return]  ${output}
+
+Execute Curl with options  [Arguments]  ${url}  ${options}=${EMPTY}
+  ${output}  Execute and Check Success  curl ${options} ${url}
+  [Return]  ${output}
+
+Build surl  [Arguments]  ${storageArea}  ${relativePath}
+  ${output}  Run  echo "srm://${srmEndpoint}/srm/managerv2?SFN=/${storageArea}/${relativePath}"
+  [Return]  ${output}
+
+Build simple surl  [Arguments]  ${storageArea}  ${relativePath}
+  ${output}  Run  echo "srm://${srmEndpoint}/${storageArea}/${relativePath}"
+  [Return]  ${output}

@@ -5,23 +5,24 @@ Resource   variables.txt
 
 *** Keywords ***
 
-List files in directory using lcg_utils  [Arguments]  ${path}
-  ${output}  Run  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${path}
+List files in directory using lcg_utils  [Arguments]  ${storageArea}  ${path}
+  ${surl}  Build surl  ${storageArea}  ${path}
+  ${output}  Run  lcg-ls -l -b -D srmv2 ${surl}
   [Return]  ${output}
 
-Check file exists using lcg-utils  [Arguments]  ${path}
-  Execute and Check Success  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${path}
+Check file exists using lcg-utils  [Arguments]  ${surl}
+  Execute and Check Success  lcg-ls -l -b -D srmv2 ${surl}
 
-Check file does not exists using lcg-utils  [Arguments]  ${path}
-  ${output}  Run  lcg-ls -l -b -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${path}
+Check file does not exists using lcg-utils  [Arguments]  ${surl}
+  ${output}  Run  lcg-ls -l -b -D srmv2 ${surl}
   Should Contain  ${output}  No such file or directory
 
-Copy-out file using lcg-utils  [Arguments]  ${localPath}  ${remotePath}
-  Execute and Check Success  lcg-cp -b --verbose -D srmv2 file:///tmp/${localPath} srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remotePath}
+Copy-out file using lcg-utils  [Arguments]  ${localPath}  ${surl}
+  Execute and Check Success  lcg-cp -b --verbose -D srmv2 file:///tmp/${localPath} ${surl}
 
-Copy-in file using lcg-utils  [Arguments]  ${remotePath}  ${localPath}
-	Execute and Check Success  lcg-cp -b --verbose -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remotePath} file:///tmp/${localPath}
+Copy-in file using lcg-utils  [Arguments]  ${surl}  ${localPath}
+  Execute and Check Success  lcg-cp -b --verbose -D srmv2 ${surl} file:///tmp/${localPath}
 
-Copy file using lcg-utils  [Arguments]  ${remoteSrcPath}  ${remoteDestPath}
-  ${output}  Execute and Check Success  lcg-cp -b --verbose -D srmv2 srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remoteSrcPath} srm://${srmEndpoint}/srm/managerv2?SFN=/${root}/${remoteDestPath}
+Copy file using lcg-utils  [Arguments]  ${srcSurl}  ${destSurl}
+  ${output}  Execute and Check Success  lcg-cp -b --verbose -D srmv2 ${srcSurl} ${destSurl}
   [Return]  ${output}

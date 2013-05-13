@@ -5,12 +5,11 @@ Resource   variables.txt
 
 *** Keywords ***
 
-Copy-out file using globus-utils  [Arguments]  ${localPath}  ${remotePath}
-  Execute and Check Success  globus-url-copy file:///tmp/${localPath} gsiftp://${globusEndpoint}/storage/${root}/${remotePath}
+Copy-out file using globus-utils  [Arguments]  ${localPath}  ${storageArea}  ${remotePath}
+  Execute and Check Success  globus-url-copy file:///tmp/${localPath} gsiftp://${globusEndpoint}/${storageAreaRoot}/${storageArea}/${remotePath}
 
-
-Copy-in file using globus-utils  [Arguments]  ${remotePath}  ${localPath}
-  Execute and Check Success  globus-url-copy  gsiftp://${globusEndpoint}/storage/${root}/${remotePath} file:///tmp/${localPath}
+Copy-in file using globus-utils  [Arguments]  ${storageArea}  ${remotePath}  ${localPath}
+  Execute and Check Success  globus-url-copy  gsiftp://${globusEndpoint}/${storageAreaRoot}/${storageArea}/${remotePath} file:///tmp/${localPath}
 
 Copy-in file using gsiftp protocol  [Arguments]  ${turl}  ${localPath}
   Execute and Check Success  globus-url-copy ${turl} file:///tmp/${localPath}

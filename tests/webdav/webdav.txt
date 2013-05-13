@@ -1,25 +1,37 @@
 *** Settings ***
 Resource   lib/stormlib.txt
 Resource   lib/clientSRM.txt
+Resource   lib/credentials.txt
+Suite Setup       Create proxies  ${root}
+Suite Teardown    Delete proxies
 
 *** Test Cases ***
 
 Create a directory using WebDAV
   ${dirName}  Get a unique name
-  Execute Curl  -X MKCOL https://${davEndpoint}/${root}/${dirName}
+  ${surl}  Build surl  ${root}  ${dirName}
+  ${options}  Run  echo "-X MKCOL --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}"
+  Execute Curl with options  https://${davSecureEndpoint}/${root}/${dirName}  ${options}
   Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname}
+  [Teardown]  Perform rmdir using clientSRM  ${surl}
 
 Delete a directory using WebDAV
   ${dirName}  Get a unique name
-  Execute clientSRM Command on Surl  mkdir  srm://${srmEndpoint}/${root}/${dirname}
-  Execute Curl  -X DELETE https://${davEndpoint}/${root}/${dirName}
+  ${surl}  Build surl  ${vomsproxyRWStorageArea}  ${dirName}
+  Perform mkdir using clientSRM  ${surl}
+  ${options}  Run  echo "-X DELETE --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}"
+  Execute Curl with options  https://${davSecureEndpoint}/${root}/${dirName}  ${options}
 
 Put a file using WebDAV calling curl -T
   ${fileName}  Create local file
-  Execute Curl  -T /tmp/${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
-  Execute clientSRM Command on Surl  rm  srm://${srmEndpoint}/${root}/${fileName}
+  ${surl}  Build surl  ${root}  ${fileName}
+  ${options}  Run  echo "-T /tmp/${fileName} --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}"
+  Execute Curl with options  https://${davSecureEndpoint}/${root}/${fileName}  ${options}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Put a file using WebDAV calling the PUT method
   ${fileName}  Create local file
-  Execute Curl  -X PUT ${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
-  Execute clientSRM Command on Surl  rm  srm://${srmEndpoint}/${root}/${fileName}
+  ${surl}  Build surl  ${root}  ${fileName}
+  ${options}  Run  echo "-X PUT ${fileName} --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}"
+  Execute Curl with options  https://${davSecureEndpoint}/${root}/${fileName}  ${options}
+  [Teardown]  Perform rm using clientSRM  ${surl}

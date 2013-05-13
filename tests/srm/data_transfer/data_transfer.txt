@@ -4,129 +4,146 @@ Resource   lib/clientSRM.txt
 Resource   lib/globus_util.txt
 Resource   lib/lcg_util.txt
 Resource   lib/dcache.txt
+Resource   lib/credentials.txt
+Suite Setup       Create proxies  ${root}
+Suite Teardown    Delete proxies
 
 *** Test Cases ***
 
 Prepare to get on an existent file using clientSRM
   [Tags]  storm-client  ptg
   ${test_file}  Get a unique name
-  Put without really putting  /  ${test_file}
-  ${output}  Execute clientSRM Command on Surl  ptg  srm://${srmEndpoint}/${root}/${test_file}
+  Put without really putting using clientSRM  ${root}  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}
   Should Contain  ${output}  SRM_REQUEST_QUEUED
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  ${output}  Execute clientSRM Command on Surl with Token  ptg -p  srm://${srmEndpoint}/${root}/${test_file}  ${token}
-  Should Contain  ${output}  SRM_SUCCESS
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}  -t ${token} -p
+  Should Contain  ${output}  SRM_FILE_PINNED
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Prepare to get on an unexistent file using clientSRM
   [Tags]  storm-client  ptg
   ${test_file}  Get a unique name
-  ${output}  Prepare to get  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}  -p
   Should Contain  ${output}  SRM_INVALID_PATH
 
 Release file on an existent file using clientSRM
   [Tags]  storm-client  rf
   ${test_file}  Get a unique name
-  Put without really putting  /  ${test_file}
-  ${output}  Execute clientSRM Command on Surl  ptg -p  srm://${srmEndpoint}/${root}/${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  Put without really putting using clientSRM  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}  -p
   Should Contain  ${output}  SRM_SUCCESS
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  ${output}  Execute clientSRM Command on Surl with Token  rf  srm://${srmEndpoint}/${root}/${test_file}  ${token}
+  ${output}  Perform rf using clientSRM  ${surl}  ${token}
   Should Contain  ${output}  SRM_SUCCESS
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Put done an existent file using clientSRM
   [Tags]  storm-client  pd
   ${test_file}  Get a unique name
-  ${output}  ${token}  Prepare to put  /  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
   Should Contain  ${output}  SRM_SPACE_AVAILABLE
-  Put done  /  ${test_file}  ${token}
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  ${output}  Perform pd using clientSRM  ${surl}  ${token}  -p
+  Should Contain  ${output}  SRM_SUCCESS
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
-Test that the SRM service is able to trasfer a file on the SRM endpoint
+Test that the SRM service is able to transfer a file on the SRM endpoint
   [Tags]  storm-client  globus-utils
   ${test_file}  Create local file
-  ${output}  ${token}  Prepare to put  ${EMPTY}  ${test_file}
-  Copy-out file using globus-utils  ${test_file}  ${test_file}
-  Put done  ${EMPTY}  ${test_file}  ${token}
-  ${output}  List files in directory using clientSRM  ${test_file}
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
+  Should Contain  ${output}  SRM_SPACE_AVAILABLE
+  Copy-out file using globus-utils  ${test_file}  ${root}  ${test_file}
+  ${output}  Perform pd using clientSRM  ${surl}  ${token}  -p
+  Should Contain  ${output}  SRM_SUCCESS
+  ${output}  Perform ls using clientSRM  ${surl}
+  Should Contain  ${output}  SRM_SUCCESS
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Check failure when performing a ptp on a file already put
   [Tags]  storm-client  ptp
   ${test_file}  Create local file
-  ${output}  ${token}  Prepare to put  ${EMPTY}  ${test_file}
-  Copy-out file using globus-utils  ${test_file}  ${test_file}
-  Put done  ${EMPTY}  ${test_file}  ${token}
-  ${output}  ${token}  Prepare to put  ${EMPTY}  ${test_file}
+  ${surl}  Build surl  ${root}  ${test_file}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p
+  Copy-out file using globus-utils  ${test_file}  ${root}  ${test_file}
+  ${output}  Perform pd using clientSRM  ${surl}  ${token}  -p
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p -t ${token}
   Should Contain  ${output}  SRM_FAILURE
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
-Test that the SRM service is able to trasfer a file from the SRM endpoint
+Test that the SRM service is able to transfer a file from the SRM endpoint
   [Tags]  storm-client  ptg
   ${test_file}  Create local file
-  Copy-out file using lcg-utils  ${test_file}  ${test_file}
-  ${output}  Prepare to get  ${test_file}  -T -P gsiftp
+  ${surl}  Build surl  ${root}  ${test_file}
+  Copy-out file using lcg-utils  ${test_file}  ${surl}
+  ${output}  ${token}  Perform ptg using clientSRM  ${surl}  -p -T -P gsiftp
   ${result}  ${turl}=  Should Match Regexp  ${output}  transferURL=(\".+\")
   Copy-in file using gsiftp protocol  ${turl}  ${test_file}
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
-Check lcg-cp computed checksum in case it start with zero
+Check lcg-cp computed checksum in case it starts with zero
   [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/108. Given a file with ADLER32 checksum that starts with '0' and a SURL pointing to a non existent file in an existent folder, verify that after transfering the file on the SURL the checksum value computed for the file matches as string with the one of the local file.
   [Tags]  lcg-utils  regression  cp
-  ${filename}  Create local file with checksum that starts with zero
-  Copy-out file using lcg-utils  ${filename}  ${filename}
-  ${output}  Detailed Ls on resource using clientSRM  ${filename}
+  ${srcFile}  Create local file with checksum that starts with zero
+  ${srcSurl}  Build surl  ${root}  ${srcFile}
+  ${destFile}  Get a unique name
+  ${destSurl}  Build surl  ${root}  ${destFile}
+  Copy-out file using lcg-utils  ${srcFile}  ${srcSurl}
+  ${output}  Detailed ls using clientSRM  ${srcSurl}
   ${result}  ${b_checksum}=  Should Match Regexp  ${output}  checkSumValue=(\".+\")
   Log  ${b_checksum}
-  ${filename2}  Get a unique name
-  ${output}  Copy file using lcg-utils  ${filename}  ${filename2}
-  ${output}  Detailed Ls on resource using clientSRM  ${filename2}
+  Copy file using lcg-utils  ${srcSurl}  ${destSurl}
+  ${output}  Detailed ls using clientSRM  ${destSurl}
   ${result}  ${a_checksum}=  Should Match Regexp  ${output}  checkSumValue=(\".+\")
   Log  ${a_checksum}
   Should be equal  ${b_checksum}  ${a_checksum}
-  [Teardown]  Remove file using clientSRM  ${filename}
-  Remove file using clientSRM  ${filename2}
+  [Teardown]  Perform rm using clientSRM  ${srcSurl}
+              Perform rm using clientSRM  ${destSurl}
 
 Test lcg-cp out
   [Tags]  lcg-utils  cp
   ${filename}  Create local file
-  Copy-out file using lcg-utils  ${filename}  ${filename}
-  [Teardown]  Remove file using clientSRM  ${filename}
+  ${surl}  Build surl  ${root}  ${filename}
+  Copy-out file using lcg-utils  ${filename}  ${surl}
+  [Teardown]  Perform rm using clientSRM  ${surl}
 
 Check if a ptp on an unexistant file with a wrong protocol return the right error message
   [Documentation]  Regression test for https://storm.cnaf.infn.it:8443/redmine/issues/127
   [Tags]  storm-client  regression
-  ${test_file}  Get a unique name 
-  ${output}  ${token}  Prepare to put  /  ${test_file}  -T -P unknown_protocol
+  ${filename}  Get a unique name
+  ${surl}  Build surl  ${root}  ${filename}
+  ${output}  ${token}  Perform ptp using clientSRM  ${surl}  -p -T -P unknown_protocol
   Should Contain  ${output}  SRM_NOT_SUPPORTED
 
 Check a file is correctly transferred out, re-transferred in and deleted with dcache client
   [Tags]  lcg-utils  dcache-client
   ${filename}  Create local file
-  Copy-out file using lcg-utils  ${filename}  ${filename}
-  Copy-in file using lcg-utils  ${filename}  ${filename}
-  Remove file using dCache client  ${filename}
-  
+  ${surl}  Build surl  ${root}  ${filename}
+  Copy-out file using lcg-utils  ${filename}  ${surl}
+  Copy-in file using lcg-utils  ${surl}  ${filename}
+  Remove file using dCache client  ${root}  ${filename}
 
-Check file copy in/out using lcg-utils, use dcache-client to create/remove dir and file  
+Check file copy in/out using lcg-utils, use dcache-client to create/remove dir and file
   [Tags]  lcg-utils  dcache-client
   ${filename}  Create local file
-  ${output}  List files in directory using lcg_utils  ${filename}
+  ${output}  List files in directory using lcg_utils  ${root}  ${filename}
   Should Contain  ${output}  No such file or directory
-  ${dirName}  Get a unique name   
-  Create directory using dCache client  ${dirName}
-  ${output}  Try to create directory using dCache client  ${dirName}
+  ${dirName}  Get a unique name
+  Create directory using dCache client  ${root}  ${dirName}
+  ${output}  Try to create directory using dCache client  ${root}  ${dirName}
   Should Contain  ${output}  SRM_DUPLICATION_ERROR
-  ${output}  List files in directory using lcg_utils  ${dirName}
+  ${output}  List files in directory using lcg_utils  ${root}  ${dirName}
   Should Not Contain  ${output}  SRM_INVALID_PATH
-  Copy-out file using lcg-utils  ${filename}  ${dirName}/${filename}
-  ${output}  List files in directory using lcg_utils  ${dirName}/${filename} 
+  ${surl}  Build surl  ${root}  ${dirName}/${filename}
+  Copy-out file using lcg-utils  ${filename}  ${surl}
+  ${output}  List files in directory using lcg_utils  ${root}  ${dirName}/${filename}
   Should Not Contain  ${output}  SRM_INVALID_PATH
-  Copy-in file using lcg-utils  ${dirName}/${filename}  ${filename}
-  Remove file using dCache client  ${dirName}/${filename}
-  ${output}  Try to remove file using dCache client  ${dirName}/${filename}
+  Copy-in file using lcg-utils  ${surl}  ${filename}
+  Remove file using dCache client  ${root}  ${dirName}/${filename}
+  ${output}  Try to remove file using dCache client  ${root}  ${dirName}/${filename}
   Should Contain  ${output}  SRM_FAILURE
-  Remove directory using dCache client  ${dirName}
-  ${output}  Try to remove directory using dCache client  ${dirName}  
+  Remove directory using dCache client  ${root}  ${dirName}
+  ${output}  Try to remove directory using dCache client  ${root}  ${dirName}  
   Should Contain  ${output}  SRM_INVALID_PATH

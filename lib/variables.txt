@@ -1,12 +1,32 @@
 *** Variables ***
 
-${srmEndpoint}	omii001-vm04.cnaf.infn.it:8444
-${davEndpoint}  omii001-vm04.cnaf.infn.it:8443
-${globusEndpoint}  omii001-vm04.cnaf.infn.it:2811
+${backEndHost}  omii006-vm01.cnaf.infn.it
 
-${root}	 testers.eu-emi.eu
-${storageAreaToken}	 TESTERSEUEMIEU_TOKEN
+${frontEndHost}  omii001-vm04.cnaf.infn.it
+${frontEndPort}  8444
 
-${usercert}  /home/jenkins/.globus/usercert.pem
-${userproxy}  /tmp/x509up_u506
+${gridHTTPsHost}  omii004-vm01.cnaf.infn.it
+${gridHTTPsPort}  8085
+${gridHTTPsSecurePort}  8443
+
+${gridFTPHost}  ${backEndHost}
+
+${srmEndpoint}  ${frontEndHost}:${frontEndPort}
+${globusEndpoint}  ${frontEndHost}:2811
+${davEndpoint}  ${gridHTTPsHost}:${gridHTTPsPort}
+${davSecureEndpoint}  ${gridHTTPsHost}:${gridHTTPsSecurePort}
+
+${storageAreaRoot}  /gpfs_omni/testbed_1.11_sl5/storage
+
+${root}  testers.eu-emi.eu
+${storageAreaToken}  TESTERSEUEMIEU_TOKEN
+
+${usercert}  $HOME/.globus/usercert.pem
+${userkey}  $HOME/.globus/userkey.pem
+${userproxy}  $X509_USER_PROXY
 ${trustdir}  /etc/grid-security/certificates
+
+${anonymousRWStorageArea}  free
+${vomsproxyRWStorageArea}  testers.eu-emi.eu
+${gridproxyRWStorageArea}  cnaf
+${personalcertRWStorageArea}  cnaf
