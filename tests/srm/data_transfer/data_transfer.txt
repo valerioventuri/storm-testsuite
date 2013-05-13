@@ -21,7 +21,7 @@ Prepare to get on an existent file using clientSRM
 Prepare to get on an unexistent file using clientSRM
   [Tags]  storm-client  ptg
   ${test_file}  Get a unique name
-  ${output}  ${token}  Prepare to get  ${test_file}
+  ${output}  Prepare to get  ${test_file}
   Should Contain  ${output}  SRM_INVALID_PATH
 
 Release file on an existent file using clientSRM
@@ -66,7 +66,7 @@ Test that the SRM service is able to trasfer a file from the SRM endpoint
   [Tags]  storm-client  ptg
   ${test_file}  Create local file
   Copy-out file using lcg-utils  ${test_file}  ${test_file}
-  ${output}  ${token}  Prepare to get  ${test_file}  -T -P gsiftp
+  ${output}  Prepare to get  ${test_file}  -T -P gsiftp
   ${result}  ${turl}=  Should Match Regexp  ${output}  transferURL=(\".+\")
   Copy-in file using gsiftp protocol  ${turl}  ${test_file}
   [Teardown]  Remove file using clientSRM  ${test_file}

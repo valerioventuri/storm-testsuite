@@ -8,11 +8,13 @@ Resource   lib/clientSRM.txt
 
 Check double PtG on a file
   [Tags]   regression  ptg
-  ${test_file}  Run  echo "test."`date "+%s"`
-  Put without really putting  /  ${test_file}
-  Prepare to get  ${test_file}
-  Prepare to get  ${test_file}
-  [Teardown]  Remove file using clientSRM  ${test_file}
+  ${fileName}  Get a unique name
+  Put without really putting  /  ${fileName}
+  ${output}  Prepare to get  ${fileName}
+  Should Contain  ${output}  SRM_SUCCESS
+  ${output}  Prepare to get  ${fileName}
+  Should Contain  ${output}  SRM_SUCCESS
+  [Teardown]  Remove file using clientSRM  ${fileName}
 
 Check right failure code when invoking PtP/PtP on the same file
   [Tags]   regression  ptp
