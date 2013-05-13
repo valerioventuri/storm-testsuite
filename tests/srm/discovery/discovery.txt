@@ -16,11 +16,6 @@ Ping using the dCache client
   ${output}  Ping using dCache client
   Should Contain  ${output}  StoRM
 
-Ping returns backend age
-  [Tags]  ping  storm-client
-  ${output}  Execute clientSRM Command  ping
-  Should Match Regexp  ${output}  <BE:.+-.>
-	
 Ping returns a wrong backend age
   [Tags]  ping  storm-client
   ${output}  Execute clientSRM Command  ping
