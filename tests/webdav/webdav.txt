@@ -5,21 +5,21 @@ Resource   lib/clientSRM.txt
 *** Test Cases ***
 
 Create a directory using WebDAV
-  ${rc}  ${dirName}  Run And Return Rc And Output  echo $RANDOM
+  ${dirName}  Get a unique name
   Execute Curl  -X MKCOL https://${davEndpoint}/${root}/${dirName}
   Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname}
 
 Delete a directory using WebDAV
-  ${rc}  ${dirName}  Run And Return Rc And Output  echo $RANDOM
+  ${dirName}  Get a unique name
   Execute clientSRM Command on Surl  mkdir  srm://${srmEndpoint}/${root}/${dirname}
   Execute Curl  -X DELETE https://${davEndpoint}/${root}/${dirName}
 
 Put a file using WebDAV calling curl -T
-  ${fileName}  Run  mktemp /tmp/storm.XXXXXX
-  Execute Curl  -T ${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
+  ${fileName}  Create local file
+  Execute Curl  -T /tmp/${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
   Execute clientSRM Command on Surl  rm  srm://${srmEndpoint}/${root}/${fileName}
 
 Put a file using WebDAV calling the PUT method
-  ${fileName}  Run  mktemp /tmp/storm.XXXXXX
+  ${fileName}  Create local file
   Execute Curl  -X PUT ${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
   Execute clientSRM Command on Surl  rm  srm://${srmEndpoint}/${root}/${fileName}

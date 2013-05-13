@@ -7,6 +7,6 @@ ${globusEndpoint}  omii001-vm04.cnaf.infn.it:2811
 ${root}	 testers.eu-emi.eu
 ${storageAreaToken}	 TESTERSEUEMIEU_TOKEN
 
-${usercert}  /home/valerio/.globus/usercert.pem
-${userproxy}  /tmp/x509up_u503
+${usercert}  /home/jenkins/.globus/usercert.pem
+${userproxy}  /tmp/x509up_u506
 ${trustdir}  /etc/grid-security/certificates
