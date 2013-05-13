@@ -67,9 +67,8 @@ Put done  [Arguments]  ${path}  ${filename}  ${token}
   Should Contain  ${output}  SRM_SUCCESS
 
 Prepare to get  [Arguments]  ${filename}  ${extraParams}=${EMPTY}
-  ${output}  Execute clientSRM Command on Surl  ptg -p ${extraParams}  srm://${srmEndpoint}/${root}/${test_file}
-  ${result}  ${token}=  Should Match Regexp  ${output}  requestToken=(\".+\")
-  [Return]  ${output}  ${token}
+  ${output}  Execute clientSRM Command on Surl  ptg -p ${extraParams}  srm://${srmEndpoint}/${root}/${filename}
+  [Return]  ${output} 
 
 Get unused size  [Arguments]  ${storageAreaToken}
   ${output}  Execute clientSRM Command  gst -e httpg://${srmEndpoint}/ -d ${storageAreaToken}
