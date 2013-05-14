@@ -21,9 +21,9 @@ ${storageAreaRoot}  /gpfs_omni/testbed_1.11_sl5/storage
 ${root}  testers.eu-emi.eu
 ${storageAreaToken}  TESTERSEUEMIEU_TOKEN
 
-${usercert}  $HOME/.globus/usercert.pem
-${userkey}  $HOME/.globus/userkey.pem
-${userproxy}  $X509_USER_PROXY
+${usercert}  /home/jenkins/.globus/usercert.pem
+${userkey}  /home/jenkins/.globus/userkey.pem
+${userproxy}  /tmp/x509up_u506
 ${trustdir}  /etc/grid-security/certificates
 
 ${anonymousRWStorageArea}  free
