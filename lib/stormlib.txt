@@ -29,10 +29,6 @@ Create local file with checksum that starts with zero
   Execute and Check Success  echo "a" > /tmp/${name}
   [Return]  ${name}
 
-Execute Curl  [Arguments]  ${cmd}
-  ${output}  Execute and Check Success  curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} ${cmd}
-  [Return]  ${output}
-
 Execute Curl with options  [Arguments]  ${url}  ${options}=${EMPTY}
   ${output}  Execute and Check Success  curl ${options} ${url}
   [Return]  ${output}
