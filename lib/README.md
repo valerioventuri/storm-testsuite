@@ -32,23 +32,57 @@ ${file}  Create local file with checksum that starts with zero
 Check file does not exists using lcg-utils  ${file}
 ```
 
-### Execute Curl
+### Execute Curl with options
 
-Execute curl using the users proxy as certificate. Using
-
-```bash
-Put a file using WebDAV calling the PUT method
-  ${fileName}  Run  mktemp /tmp/storm.XXXXXX
-  Execute Curl  -X PUT ${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
-```
-
-executes
+Execute curl on the specified URL, eventually using the options passed, and then checks if the command succeeds.
+As example, using:
 
 ```bash
-curl --cacert ${usercert} --cert ${userproxy} --capath ${trustdir} -X PUT ${fileName} https://${davEndpoint}/testers.eu-emi.eu/${fileName}
+WebDAV MKCOL with voms proxy
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${dirname}  Get a unique name
+  ${options}  Set variable  --verbose -X MKCOL --cert ${userproxy} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${dirName}
+  ${output}  Execute Curl with options  ${url}  ${options}
 ```
 
-and check that the command suceed.
+executes:
+
+```bash
+curl --verbose -X MKCOL --cert ${userproxy} --capath ${trustdir} https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/tmp.tlour26193
+```
+
+and check that the command succeed.
+
+### Build surl
+
+Retrieves a valid SURL in query form, builded from passed ${storageArea} and ${relativePath}.
+For exemple, using:
+
+```bash
+  Build surl  storageAreaName  /path/to/file
+```
+
+retrieves:
+
+```
+  srm://${srmEndpoint}/srm/managerv2?SFN=/storageAreaName/path/to/file
+```
+
+### Build simple surl
+
+Retrieves a valid SURL in simple form, builded from passed ${storageArea} and ${relativePath}.
+For exemple, using:
+
+```bash
+  Build simple surl  storageAreaName  /path/to/file
+```
+
+retrieves:
+
+```
+  srm://${srmEndpoint}/storageAreaName/path/to/file
+```
 
 ## clientSRM based keywords
 
@@ -126,48 +160,104 @@ Put done a file
   Should Contain  ${output}  SRM_SUCCESS
 ```
 
-### Create directory using clientSRM
+### Perform mkdir using clientSRM
 
-Issues a clientSRM mkdir for creating a directory of a given path.
+Using clientSRM, launches a SRM _mkdir_ command on a specified _surl_ that has to point to a non existent directory, eventually specifying some extra _options_. For example, using:
 
-### Try to create directory using clientSRM
+```bash
+  ${surl}  Build surl  storageAreaName  /path/to/newdir
+  Perform mkdir using clientSRM  ${surl}
+```
 
-Issues a clientSRM mkdir for creating a directory of a given path. This will not fail if the command fails, and returns the output.
+a /path/to/newdir directory is created.
 
-### Remove directory using clientSRM
+### Perform rm using clientSRM
 
-Issues a clientSRM rmdir for creating a directory of a given path.
+Using clientSRM, launches a SRM _rm_ command on a specified _surl_ that has to point to an existent file, eventually specifying some extra _options_. For example, using:
 
-### List files in directory using clientSRM
+```bash
+  ${surl}  Build surl  storageAreaName  /path/to/existent/file
+  Perform rm using clientSRM  ${surl}
+```
 
-### Detailed Ls on resource using clientSRM
+the existent file /path/to/existent/file is removed.
+
+### Perform rmdir using clientSRM
+
+Using clientSRM, launches a SRM _rmdir_ command on a specified _surl_ that has to point to an existent directory, eventually specifying some extra _options_ (in case directory is not empty, you have to add -r option). For example, using:
+
+```bash
+  ${surl}  Build surl  storageAreaName  /path/to/existent/directory
+  Perform rm using clientSRM  ${surl}  -r
+```
+
+the existent directory /path/to/existent/directory (and eventually all its sub-files) is removed.
+
+### Perform ping using clientSRM
+
+Perform a ping command on the configured SRM endpoint.
+
+### Perform ptp using clientSRM
+
+### Perform sptp using clientSRM
+
+### Perform pd using clientSRM
+
+### Perform ptg using clientSRM
+
+### Perform sptg using clientSRM
+
+### Perform rf using clientSRM
+
+### Perform ls using clientSRM
+
+### Detailed ls using clientSRM
 
 Issues a clientSRM ls with -l option of a given path
 
-### Prepare to put
+### Get unused size using clientSRM
 
-Issues a clientSRM ptp.
+Get the unused size for a storage area.
 
-### Put without really putting
+### Get space metadata using clientSRM
+
+### Reserve space using clientSRM
+
+### Release space using clientSRM
+
+### Create directory using clientSRM
+
+Issues a clientSRM mkdir to create a directory identified by the storage-area name and a relative path.
+
+### Remove empty directory using clientSRM
+
+Issues a clientSRM rmdir to delete an empty directory identified by the storage-area name and a relative path.
+
+### Remove not empty directory using clientSRM
+
+Issues a clientSRM rmdir to delete a non empty directory identified by the storage-area name and a relative path.
+
+### Remove file using clientSRM
+
+Issues a clientSRM rm to delete an existent file identified by the storage-area name and a relative path.
+
+### Put without really putting using clientSRM
 
 Issues a clientSRM ptp and the subsequent pd, without transfering the file.
 
-### Put done
+### List files in directory using clientSRM
 
-Issues a ClientSRM pd on file ${path}/${filename} using a specified ${token} and check success.
-
-```bash
-Put done  ${path}  ${filename}  ${token}
-```
-
-### Prepare to get
-
-Issues a clientSRM ptg.
-
-### Get unused size
-
-Get the unused size for a storage area.
+### Get space token using clientSRM
   
+### Init certificate and voms proxy
+
+### Init certificate and plain proxy
+
+### Init certificate with unencrypted key
+
+### Clear all credentials
+
+
 ## lcg-utils based keywords
 
 ### List files in directory using lcg_utils
@@ -179,7 +269,7 @@ Executes a lcg-ls and returns the output.
 Issues an lgc-ls to check that a file exists.
 
 ```bash
-	Check file exists using lcg-utils  remotePath
+	Check file exists using lcg-utils  surl
 ```
 
 ### Check file does not exists using lcg-utils
@@ -187,7 +277,7 @@ Issues an lgc-ls to check that a file exists.
 Issues an lcg-ls and check that a file does not exist.
 
 ```bash
-	Check file does not exist using lcg-utils  remotePath
+	Check file does not exist using lcg-utils  surl
 ```
 
 ### Copy-out file using lcg-utils
@@ -195,7 +285,7 @@ Issues an lcg-ls and check that a file does not exist.
 Issues an lcg-cp to copy a file to a StoRM instance.
 
 ```bash
-  Copy-out file using lcg-utils  localePath  remotePath
+  Copy-out file using lcg-utils  localePath  surl
 ```
 
 ### Copy-in file using lcg-utils
@@ -203,15 +293,15 @@ Issues an lcg-cp to copy a file to a StoRM instance.
 Issues an lcg-cp to copy a file from a StoRM instance.
 
 ```bash
-  Copy-in file using lcg-utils  localePath  remotePath
+  Copy-in file using lcg-utils  remotePath  localePath
 ```
 
 ### Copy file using lcg-utils
 
-Issues an lcg-cp to copy a file from a remote source path to another remote destination path.
+Issues an lcg-cp to copy a file identified by a remote source SURL to a remote destination also identified by another SURL.
 
 ```bash
-  Copy file using lcg-utils  remoteSrcPath  remoteDestPath
+  Copy file using lcg-utils  remoteSrcSURL  remoteDestSURL
 ```
 
 ## globus-utils based keywords
@@ -221,7 +311,7 @@ Issues an lcg-cp to copy a file from a remote source path to another remote dest
 Issues a globus-url-copy to copy a file to a StoRM instance.
 
 ```bash
-  Copy-out file using globus-utils  localPath  remotePath
+  Copy-out file using globus-utils  localPath  remoteStorageArea  remotePath
 ```
 
 ### Copy-in file using globus-utils
@@ -229,7 +319,7 @@ Issues a globus-url-copy to copy a file to a StoRM instance.
 Issues a globus-url-copy to copy a file from a StoRM instance.
 
 ```bash
-  Copy-in file using globus-utils  localPath  remotePath
+  Copy-in file using globus-utils  remoteStorageArea  remotePath  localPath
 ```
 
 ### Copy-in file using gsiftp protocol
@@ -253,4 +343,33 @@ Create a directory executing a srmmkdir command. If the command fails the keywor
 ### Try to create directory using dCache client
 
 Create a directory executing a srmmkdir command. This will not fail if the command does not succeed and returns the output.
+
+### Remove directory using dCache client
+
+### Try to remove directory using dCache client
+
+### Remove file using dCache client
+
+### Try to remove file using dCache client
+
+
+## Credentials management keywords
+
+### Use certificate
+
+### Use certificate with unencrypted key
+
+### Stop using certificate
+
+### Get options list
+
+### Get proxy info
+
+### Create proxy
+
+### Create plain proxy
+
+### Destroy proxy
+
+### Create voms proxy
 
