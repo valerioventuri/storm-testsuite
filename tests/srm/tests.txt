@@ -110,3 +110,24 @@ Prepare to put using a non existent space token
   Should Contain  ${output}  SRM_INVALID_REQUEST
   Should Contain  ${output}  The provided Space Token does not exists
   [Teardown]  Clear all credentials
+
+Status of prepare to put using a non existent token
+  [Tags]  regression  sptp
+  [Documentation]  Regression test for https://issues.infn.it/browse/STOR-217. StoRM crashed when a status for an async request was requested but the service is not able to get the into out of the database (for example, the token does not exists). This test calls a status for a prepare to put.
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${output}  Execute clientSRM Command  sptp -t abcde
+  [Teardown]  Clear all credentials
+
+Status of prepare to get using a non existent token
+  [Tags]  regression  sptg
+  [Documentation]  Regression test for https://issues.infn.it/browse/STOR-217. StoRM crashed when a status for an async request was requested but the service is not able to get the into out of the database (for example, the token does not exists). This test calls a status for a prepare to get.
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${output}  Execute clientSRM Command  sptg -t abcde
+  [Teardown]  Clear all credentials
+
+Status of bring online using a non existent token
+  [Tags]  regression  sbol
+  [Documentation]  Regression test for https://issues.infn.it/browse/STOR-217. StoRM crashed when a status for an async request was requested but the service is not able to get the into out of the database (for example, the token does not exists). This test calls a status for bring online.
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${output}  Execute clientSRM Command  bol -t abcde
+  [Teardown]  Clear all credentials
