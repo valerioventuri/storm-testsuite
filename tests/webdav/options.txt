@@ -32,3 +32,13 @@ WebDAV OPTIONS on directory with plain proxy credentials
   Should Contain  ${output}  200 OK
   Should Contain  ${output}  DAV: 1
   [Teardown]  Clear all credentials
+
+WebDAV OPTIONS on directory with personal certificate
+  [Tags]  webdav  options
+  [Setup]  Init certificate with unencrypted key  test0
+  ${options}  Set variable  --verbose -X OPTIONS --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  200 OK
+  Should Contain  ${output}  DAV: 1
+  [Teardown]  Clear all credentials
