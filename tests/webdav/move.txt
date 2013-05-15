@@ -22,6 +22,38 @@ WebDAV MOVE file as anonymous
   Perform rm using clientSRM  ${destSurl}
   [Teardown]  Clear all credentials
 
+WebDAV MOVE file with voms proxy credentials
+  [Tags]  webdav  move
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${srcFileName}  Create local file
+  ${srcSurl}  Build surl  ${vomsproxyRWStorageArea}  ${srcFileName}
+  ${destFileName}  Get a unique name
+  ${destSurl}  Build surl  ${vomsproxyRWStorageArea}  ${destFileName}
+  Copy-out file using lcg-utils  ${srcFileName}  ${srcSurl}
+  ${url}  Set variable  https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${srcFileName}
+  ${destUrl}  Set variable  https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${destFileName}
+  ${options}  Set variable  --verbose -X MOVE --header 'Destination: ${destUrl}' --cert ${userproxy} --capath ${trustdir}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  Perform rm using clientSRM  ${destSurl}
+  [Teardown]  Clear all credentials
+
+WebDAV MOVE file with plain proxy credentials
+  [Tags]  webdav  move
+  [Setup]  Init certificate and plain proxy  test0
+  ${srcFileName}  Create local file
+  ${srcSurl}  Build surl  ${gridproxyRWStorageArea}  ${srcFileName}
+  ${destFileName}  Get a unique name
+  ${destSurl}  Build surl  ${gridproxyRWStorageArea}  ${destFileName}
+  Copy-out file using lcg-utils  ${srcFileName}  ${srcSurl}
+  ${url}  Set variable  https://${davSecureEndpoint}/${gridproxyRWStorageArea}/${srcFileName}
+  ${destUrl}  Set variable  https://${davSecureEndpoint}/${gridproxyRWStorageArea}/${destFileName}
+  ${options}  Set variable  --verbose -X MOVE --header 'Destination: ${destUrl}' --cert ${userproxy} --capath ${trustdir}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  Perform rm using clientSRM  ${destSurl}
+  [Teardown]  Clear all credentials
+
 WebDAV MOVE full directory as anonymous
   [Tags]  webdav  move
   [Setup]  Init certificate and voms proxy  test0  ${vo}
