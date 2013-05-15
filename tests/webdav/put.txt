@@ -142,3 +142,15 @@ WebDAV PUT overwrite file through HTTP body with plain proxy credentials
   Should Contain  ${output}  204 No Content
   Remove file using clientSRM  ${gridproxyRWStorageArea}  ${filename}
   [Teardown]  Clear all credentials
+
+WebDAV PUT overwrite file through HTTP body with personal certificate
+  [Tags]  webdav  put
+  [Setup]  Init certificate with unencrypted key  test0
+  ${filename}  Create local file
+  Put without really putting using clientSRM  ${personalcertRWStorageArea}  ${filename}
+  ${options}  Set variable  --verbose -X PUT --data-ascii 'this is a test file content' --header 'Overwrite: T' --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/${filename}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  204 No Content
+  Remove file using clientSRM  ${personalcertRWStorageArea}  ${filename}
+  [Teardown]  Clear all credentials
