@@ -43,3 +43,22 @@ WebDAV GET directory with plain proxy credentials
   Should Contain  ${output}  ${filename}
   Remove not empty directory using clientSRM  ${gridproxyRWStorageArea}  ${dirname}
   [Teardown]  Clear all credentials
+
+WebDAV GET directory with personal certificate
+  [Tags]  webdav  get
+  [Setup]  Init certificate with unencrypted key  test0
+  ${dirname}  Get a unique name
+  ${surl}  Build surl  ${personalcertRWStorageArea}  ${dirname}
+  ${output}  Perform mkdir using clientSRM  ${surl}
+  Should Contain  ${output}  SRM_SUCCESS
+  ${filename}  Create local file
+  ${surl2}  Build surl  ${personalcertRWStorageArea}  ${dirname}/${filename}
+  Copy-out file using lcg-utils  ${filename}  ${surl2}
+  ${options}  Set variable  --verbose -X GET --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/${dirname}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  200 OK
+  Should Contain  ${output}  ${dirname}
+  Should Contain  ${output}  ${filename}
+  Remove not empty directory using clientSRM  ${personalcertRWStorageArea}  ${dirname}
+  [Teardown]  Clear all credentials
