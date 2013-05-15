@@ -1,0 +1,87 @@
+*** Settings ***
+Resource   lib/stormlib.txt
+Resource   lib/clientSRM.txt
+Resource   lib/lcg_util.txt
+Resource   lib/credentials.txt
+
+*** Test Cases ***
+
+WebDAV COPY file as anonymous
+  [Tags]  webdav  copy
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${srcFileName}  Create local file
+  ${srcSurl}  Build surl  ${anonymousRWStorageArea}  ${srcFileName}
+  ${destFileName}  Get a unique name
+  ${destSurl}  Build surl  ${anonymousRWStorageArea}  ${destFileName}
+  Copy-out file using lcg-utils  ${srcFileName}  ${srcSurl}
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${srcFileName}
+  ${destUrl}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${destFileName}
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}'
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  Perform rm using clientSRM  ${srcSurl}
+  Perform rm using clientSRM  ${destSurl}
+  [Teardown]  Clear all credentials
+
+WebDAV COPY full directory as anonymous
+  [Tags]  webdav  copy
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${srcDirName}  Get a unique name
+  ${srcDirSurl}  Build surl  ${anonymousRWStorageArea}  ${srcDirName}
+  ${output}  Perform mkdir using clientSRM  ${srcDirSurl}
+  Should Contain  ${output}  SRM_SUCCESS
+  ${fileName}  Create local file
+  ${fileSurl}  Build surl  ${anonymousRWStorageArea}  ${srcDirName}/${fileName}
+  Copy-out file using lcg-utils  ${fileName}  ${fileSurl}
+  ${destDirName}  Get a unique name
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${srcDirName}
+  ${destUrl}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${destDirName}
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}'
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  Remove not empty directory using clientSRM  ${anonymousRWStorageArea}  ${srcDirName}
+  Remove not empty directory using clientSRM  ${anonymousRWStorageArea}  ${destDirName}
+  [Teardown]  Clear all credentials
+
+WebDAV COPY overwrite file as anonymous
+  [Tags]  webdav  copy
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${srcFileName}  Create local file
+  ${srcSurl}  Build surl  ${anonymousRWStorageArea}  ${srcFileName}
+  ${destFileName}  Get a unique name
+  ${destSurl}  Build surl  ${anonymousRWStorageArea}  ${destFileName}
+  Copy-out file using lcg-utils  ${srcFileName}  ${srcSurl}
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${srcFileName}
+  ${destUrl}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${destFileName}
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}'
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}' --header 'Overwrite: T'
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  204 No Content
+  Perform rm using clientSRM  ${srcSurl}
+  Perform rm using clientSRM  ${destSurl}
+  [Teardown]  Clear all credentials
+
+WebDAV COPY overwrite full directory as anonymous
+  [Tags]  webdav  copy
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${srcDirName}  Get a unique name
+  ${srcDirSurl}  Build surl  ${anonymousRWStorageArea}  ${srcDirName}
+  ${output}  Perform mkdir using clientSRM  ${srcDirSurl}
+  Should Contain  ${output}  SRM_SUCCESS
+  ${fileName}  Create local file
+  ${fileSurl}  Build surl  ${anonymousRWStorageArea}  ${srcDirName}/${fileName}
+  Copy-out file using lcg-utils  ${fileName}  ${fileSurl}
+  ${destDirName}  Get a unique name
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${srcDirName}
+  ${destUrl}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${destDirName}
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}'
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}' --header 'Overwrite: T'
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  204 No Content
+  Remove not empty directory using clientSRM  ${anonymousRWStorageArea}  ${srcDirName}
+  Remove not empty directory using clientSRM  ${anonymousRWStorageArea}  ${destDirName}
+  [Teardown]  Clear all credentials

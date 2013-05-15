@@ -10,15 +10,15 @@ WebDAV PROPFIND on directory as anonymous
   [Tags]  webdav  propfind
   [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${dirname}  Get a unique name
-  ${surl}  Build surl  ${anonymousRWStorageArea}  ${dirName}
+  ${surl}  Build surl  ${anonymousRWStorageArea}  ${dirname}
   ${output}  Perform mkdir using clientSRM  ${surl}
   Should Contain  ${output}  SRM_SUCCESS
   ${filename}  Create local file
-  ${surl2}  Build surl  ${anonymousRWStorageArea}  ${dirName}/${filename}
+  ${surl2}  Build surl  ${anonymousRWStorageArea}  ${dirname}/${filename}
   Copy-out file using lcg-utils  ${filename}  ${surl2}
   ${body}  Set variable  <?xml version='1.0' encoding='utf-8'?><propfind xmlns='DAV:'><allprop/></propfind>
   ${options}  Set variable  --verbose -X PROPFIND --header 'Content-Type: text/xml'
-  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${dirName}
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${dirname}
   ${output}  Execute Curl with options  ${url}  ${options} --data-ascii "${body}"
   Log  ${output}
   Should Contain  ${output}  ${dirname}
@@ -30,15 +30,15 @@ WebDAV PROPFIND on directory with voms proxy credentials
   [Tags]  webdav  propfind
   [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${dirname}  Get a unique name
-  ${surl}  Build surl  ${vomsproxyRWStorageArea}  ${dirName}
+  ${surl}  Build surl  ${vomsproxyRWStorageArea}  ${dirname}
   ${output}  Perform mkdir using clientSRM  ${surl}
   Should Contain  ${output}  SRM_SUCCESS
   ${filename}  Create local file
-  ${surl2}  Build surl  ${vomsproxyRWStorageArea}  ${dirName}/${filename}
+  ${surl2}  Build surl  ${vomsproxyRWStorageArea}  ${dirname}/${filename}
   Copy-out file using lcg-utils  ${filename}  ${surl2}
   ${body}  Set variable  <?xml version='1.0' encoding='utf-8'?><propfind xmlns='DAV:'><allprop/></propfind>
   ${options}  Set variable  --verbose -X PROPFIND --header 'Content-Type: text/xml' --cert ${userproxy} --capath ${trustdir}
-  ${url}  Set variable  https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${dirName}
+  ${url}  Set variable  https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${dirname}
   ${output}  Execute Curl with options  ${url}  ${options} --data-ascii "${body}"
   Log  ${output}
   Should Contain  ${output}  ${dirname}
@@ -50,15 +50,15 @@ WebDAV PROPFIND on directory with plain proxy credentials
   [Tags]  webdav  propfind
   [Setup]  Init certificate and plain proxy  test0
   ${dirname}  Get a unique name
-  ${surl}  Build surl  ${gridproxyRWStorageArea}  ${dirName}
+  ${surl}  Build surl  ${gridproxyRWStorageArea}  ${dirname}
   ${output}  Perform mkdir using clientSRM  ${surl}
   Should Contain  ${output}  SRM_SUCCESS
   ${filename}  Create local file
-  ${surl2}  Build surl  ${gridproxyRWStorageArea}  ${dirName}/${filename}
+  ${surl2}  Build surl  ${gridproxyRWStorageArea}  ${dirname}/${filename}
   Copy-out file using lcg-utils  ${filename}  ${surl2}
   ${body}  Set variable  <?xml version='1.0' encoding='utf-8'?><propfind xmlns='DAV:'><allprop/></propfind>
   ${options}  Set variable  --verbose -X PROPFIND --header 'Content-Type: text/xml' --cert ${userproxy} --capath ${trustdir}
-  ${url}  Set variable  https://${davSecureEndpoint}/${gridproxyRWStorageArea}/${dirName}
+  ${url}  Set variable  https://${davSecureEndpoint}/${gridproxyRWStorageArea}/${dirname}
   ${output}  Execute Curl with options  ${url}  ${options} --data-ascii "${body}"
   Log  ${output}
   Should Contain  ${output}  ${dirname}
