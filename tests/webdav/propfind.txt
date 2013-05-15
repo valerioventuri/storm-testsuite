@@ -65,3 +65,23 @@ WebDAV PROPFIND on directory with plain proxy credentials
   Should Contain  ${output}  ${dirname}/${filename}
   Remove not empty directory using clientSRM  ${gridproxyRWStorageArea}  ${dirname}
   [Teardown]  Clear all credentials
+
+WebDAV PROPFIND on directory with personal certificate
+  [Tags]  webdav  propfind
+  [Setup]  Init certificate with unencrypted key  test0
+  ${dirname}  Get a unique name
+  ${surl}  Build surl  ${personalcertRWStorageArea}  ${dirname}
+  ${output}  Perform mkdir using clientSRM  ${surl}
+  Should Contain  ${output}  SRM_SUCCESS
+  ${filename}  Create local file
+  ${surl2}  Build surl  ${personalcertRWStorageArea}  ${dirname}/${filename}
+  Copy-out file using lcg-utils  ${filename}  ${surl2}
+  ${body}  Set variable  <?xml version='1.0' encoding='utf-8'?><propfind xmlns='DAV:'><allprop/></propfind>
+  ${options}  Set variable  --verbose -X PROPFIND --header 'Content-Type: text/xml' --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/${dirname}
+  ${output}  Execute Curl with options  ${url}  ${options} --data-ascii "${body}"
+  Log  ${output}
+  Should Contain  ${output}  ${dirname}
+  Should Contain  ${output}  ${dirname}/${filename}
+  Remove not empty directory using clientSRM  ${personalcertRWStorageArea}  ${dirname}
+  [Teardown]  Clear all credentials
