@@ -1,32 +1,36 @@
 *** Variables ***
 
-${backEndHost}  omii006-vm01.cnaf.infn.it
+${backEndHost}  omii005-vm03.cnaf.infn.it
 
-${frontEndHost}  omii001-vm04.cnaf.infn.it
+${frontEndHost}  ${backEndHost}
 ${frontEndPort}  8444
 
-${gridHTTPsHost}  omii004-vm01.cnaf.infn.it
+${gridHTTPsHost}  ${backEndHost}
 ${gridHTTPsPort}  8085
 ${gridHTTPsSecurePort}  8443
 
-${gridFTPHost}  ${backEndHost}
+${gridFTPHost}  ${frontEndHost}
 
 ${srmEndpoint}  ${frontEndHost}:${frontEndPort}
 ${globusEndpoint}  ${frontEndHost}:2811
 ${davEndpoint}  ${gridHTTPsHost}:${gridHTTPsPort}
 ${davSecureEndpoint}  ${gridHTTPsHost}:${gridHTTPsSecurePort}
 
-${storageAreaRoot}  /gpfs_omni/testbed_1.11_sl5/storage
+${storageAreaRoot}  /storage
 
-${root}  testers.eu-emi.eu
+${vo}   testers.eu-emi.eu
+${root}  ${vo}
 ${storageAreaToken}  TESTERSEUEMIEU_TOKEN
 
-${usercert}  /home/jenkins/.globus/usercert.pem
-${userkey}  /home/jenkins/.globus/userkey.pem
-${userproxy}  /tmp/x509up_u506
+${certsDir}   /usr/share/igi-test-ca
+${privateKeyPassword}   pass
+
+${usercert}  $HOME/.globus/usercert.pem
+${userkey}  $HOME/.globus/userkey.pem
+${userproxy}  $X509_USER_PROXY
 ${trustdir}  /etc/grid-security/certificates
 
 ${anonymousRWStorageArea}  free
 ${vomsproxyRWStorageArea}  testers.eu-emi.eu
-${gridproxyRWStorageArea}  cnaf
-${personalcertRWStorageArea}  cnaf
+${gridproxyRWStorageArea}  igi
+${personalcertRWStorageArea}  igi

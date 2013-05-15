@@ -2,45 +2,51 @@
 Resource   lib/stormlib.txt
 Resource   lib/clientSRM.txt
 Resource   lib/credentials.txt
-Suite Setup       Create proxies  ${root}
-Suite Teardown    Delete proxies
 
 *** Test Cases ***
 
 WebDAV PUT file as anonymous
   [Tags]  webdav  put
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${filename}  Create local file
-  ${options}  Run  echo "--verbose -T /tmp/${filename}"
-  ${url}  Run  echo "http://${davEndpoint}/${anonymousRWStorageArea}/${filename}"
+  ${options}  Set variable  --verbose -T /tmp/${filename}
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${filename}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  201 Created
-  [Teardown]  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  [Teardown]  Clear all credentials
 
 WebDAV PUT file through HTTP body as anonymous
   [Tags]  webdav  put
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${filename}  Create local file
-  ${options}  Run  echo "--verbose -X PUT --data-ascii 'this is a test file content'"
-  ${url}  Run  echo "http://${davEndpoint}/${anonymousRWStorageArea}/${filename}"
+  ${options}  Set variable  --verbose -X PUT --data-ascii 'this is a test file content'
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${filename}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  201 Created
-  [Teardown]  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  [Teardown]  Clear all credentials
 
 WebDAV PUT overwrite file as anonymous
   [Tags]  webdav  put
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${filename}  Create local file
   Put without really putting using clientSRM  ${anonymousRWStorageArea}  ${filename}
-  ${options}  Run  echo "--verbose -T /tmp/${filename} --header 'Overwrite: T'"
-  ${url}  Run  echo "http://${davEndpoint}/${anonymousRWStorageArea}/${filename}"
+  ${options}  Set variable  --verbose -T /tmp/${filename} --header 'Overwrite: T'
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${filename}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  204 No Content
-  [Teardown]  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  [Teardown]  Clear all credentials
 
 WebDAV PUT overwrite file through HTTP body as anonymous
   [Tags]  webdav  put
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${filename}  Create local file
   Put without really putting using clientSRM  ${anonymousRWStorageArea}  ${filename}
-  ${options}  Run  echo "--verbose -X PUT --data-ascii 'this is a test file content' --header 'Overwrite: T'"
-  ${url}  Run  echo "http://${davEndpoint}/${anonymousRWStorageArea}/${filename}"
+  ${options}  Set variable  --verbose -X PUT --data-ascii 'this is a test file content' --header 'Overwrite: T'
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${filename}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  204 No Content
-  [Teardown]  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  Remove file using clientSRM  ${anonymousRWStorageArea}  ${filename}
+  [Teardown]  Clear all credentials

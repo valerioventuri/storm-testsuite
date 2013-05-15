@@ -2,43 +2,49 @@
 Resource   lib/stormlib.txt
 Resource   lib/clientSRM.txt
 Resource   lib/credentials.txt
-Suite Setup       Create proxies  ${root}
-Suite Teardown    Delete proxies
 
 *** Test Cases ***
 
 WebDAV MKCOL anonymous
   [Tags]  webdav  mkcol
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${dirname}  Get a unique name
-  ${options}  Run  echo "--verbose -X MKCOL"
-  ${url}  Run  echo "http://${davEndpoint}/${anonymousRWStorageArea}/${dirName}"
+  ${options}  Set variable  --verbose -X MKCOL
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${dirName}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  201 Created
-  [Teardown]  Remove empty directory using clientSRM  ${anonymousRWStorageArea}  ${dirname}
+  Remove empty directory using clientSRM  ${anonymousRWStorageArea}  ${dirname}
+  [Teardown]  Clear all credentials
 
 WebDAV MKCOL with voms proxy
   [Tags]  webdav  mkcol
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${dirname}  Get a unique name
-  ${options}  Run  echo "--verbose -X MKCOL --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}"
-  ${url}  Run  echo "https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${dirName}"
+  ${options}  Set variable  --verbose -X MKCOL --cert ${userproxy} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${vomsproxyRWStorageArea}/${dirName}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  201 Created
-  [Teardown]  Remove empty directory using clientSRM  ${vomsproxyRWStorageArea}  ${dirname}
+  Remove empty directory using clientSRM  ${vomsproxyRWStorageArea}  ${dirname}
+  [Teardown]  Clear all credentials
 
-WebDAV MKCOL with grid proxy
+WebDAV MKCOL with plain proxy
   [Tags]  webdav  mkcol
+  [Setup]  Init certificate and plain proxy  test0
   ${dirname}  Get a unique name
-  ${options}  Run  echo "--verbose -X MKCOL --cacert ${usercert} --cert ${gridproxy} --capath ${trustdir}"
-  ${url}  Run  echo "https://${davSecureEndpoint}/${gridproxyRWStorageArea}/${dirName}"
+  ${options}  Set variable  --verbose -X MKCOL --cert ${userproxy} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${gridproxyRWStorageArea}/${dirName}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  201 Created
-  [Teardown]  Remove empty directory using clientSRM  ${gridproxyRWStorageArea}  ${dirname}
+  Remove empty directory using clientSRM  ${gridproxyRWStorageArea}  ${dirname}
+  [Teardown]  Clear all credentials
 
 WebDAV MKCOL with personal certificate
   [Tags]  webdav  mkcol
+  [Setup]  Init certificate with unencrypted key  test0
   ${dirname}  Get a unique name
-  ${options}  Run  echo "--verbose -X MKCOL --key ${userkey} --cert ${usercert} --capath ${trustdir}"
-  ${url}  Run  echo "https://${davSecureEndpoint}/${personalcertRWStorageArea}/${dirName}"
+  ${options}  Set variable  --verbose -X MKCOL --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${url}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/${dirName}
   ${output}  Execute Curl with options  ${url}  ${options}
   Should Contain  ${output}  201 Created
-  [Teardown]  Remove empty directory using clientSRM  ${personalcertRWStorageArea}  ${dirname}
+  Remove empty directory using clientSRM  ${personalcertRWStorageArea}  ${dirname}
+  [Teardown]  Clear all credentials
