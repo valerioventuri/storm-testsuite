@@ -31,6 +31,10 @@ ${userproxy}  $X509_USER_PROXY
 ${trustdir}  /etc/grid-security/certificates
 
 ${anonymousRWStorageArea}  free
+${anonymousBisRWStorageArea}  free-bis
 ${vomsproxyRWStorageArea}  testers.eu-emi.eu
+${vomsproxyBisRWStorageArea}  dteam
 ${gridproxyRWStorageArea}  igi
+${gridproxyBisRWStorageArea}  igi-bis
 ${personalcertRWStorageArea}  igi
+${personalcertBisRWStorageArea}  igi-bis
