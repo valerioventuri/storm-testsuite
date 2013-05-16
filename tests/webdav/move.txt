@@ -376,3 +376,23 @@ WebDAV MOVE overwrite full directory over HTTPS with personal certificate
   Should Contain  ${output}  204 No Content
   Remove not empty directory using clientSRM  ${personalcertRWStorageArea}  ${destDirName}
   [Teardown]  Clear all credentials
+
+WebDAV MOVE overwrite file over HTTPS with personal certificate
+  [Tags]  webdav  move
+  [Setup]  Init certificate with unencrypted key  test0
+  ${srcFileName}  Create local file
+  ${srcSurl}  Build surl  ${personalcertRWStorageArea}  ${srcFileName}
+  ${destFileName}  Get a unique name
+  ${destSurl}  Build surl  ${personalcertRWStorageArea}  ${destFileName}
+  Copy-out file using lcg-utils  ${srcFileName}  ${srcSurl}
+  ${url}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/${srcFileName}
+  ${destUrl}  Set variable  https://${davSecureEndpoint}/${personalcertRWStorageArea}/${destFileName}
+  ${options}  Set variable  --verbose -X COPY --header 'Destination: ${destUrl}' --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  201 Created
+  ${options}  Set variable  --verbose -X MOVE --header 'Destination: ${destUrl}' --header 'Overwrite: T' --cert ${usercert} --key ${userkey} --capath ${trustdir}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  204 No Content
+  Perform rm using clientSRM  ${destSurl}
+  [Teardown]  Clear all credentials
+
