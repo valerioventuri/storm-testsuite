@@ -5,34 +5,6 @@ Resource   lib/credentials.txt
 
 *** Test Cases ***
 
-Create a directory using WebDAV
-  [Setup]  Init certificate and voms proxy  test0  ${vo}
-  ${dirName}  Get a unique name
-  ${surl}  Build surl  ${root}  ${dirName}
-  ${options}  Set variable  -X MKCOL --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}
-  Execute Curl with options  https://${davSecureEndpoint}/${root}/${dirName}  ${options}
-  Execute clientSRM Command on Surl  rmdir  srm://${srmEndpoint}/${root}/${dirname}
-  Perform rmdir using clientSRM  ${surl}
-  [Teardown]  Clear all credentials
-
-Delete a directory using WebDAV
-  [Setup]  Init certificate and voms proxy  test0  ${vo}
-  ${dirName}  Get a unique name
-  ${surl}  Build surl  ${vomsproxyRWStorageArea}  ${dirName}
-  Perform mkdir using clientSRM  ${surl}
-  ${options}  Set variable  -X DELETE --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}
-  Execute Curl with options  https://${davSecureEndpoint}/${root}/${dirName}  ${options}
-  [Teardown]  Clear all credentials
-
-Put a file using WebDAV calling curl -T
-  [Setup]  Init certificate and voms proxy  test0  ${vo}
-  ${fileName}  Create local file
-  ${surl}  Build surl  ${root}  ${fileName}
-  ${options}  Set variable  -T /tmp/${fileName} --cacert ${usercert} --cert ${userproxy} --capath ${trustdir}
-  Execute Curl with options  https://${davSecureEndpoint}/${root}/${fileName}  ${options}
-  Perform rm using clientSRM  ${surl}
-  [Teardown]  Clear all credentials
-
 Put a file using WebDAV calling the PUT method
   [Setup]  Init certificate and voms proxy  test0  ${vo}
   ${fileName}  Create local file
