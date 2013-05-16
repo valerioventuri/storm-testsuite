@@ -16,6 +16,9 @@ ${globusEndpoint}  ${frontEndHost}:2811
 ${davEndpoint}  ${gridHTTPsHost}:${gridHTTPsPort}
 ${davSecureEndpoint}  ${gridHTTPsHost}:${gridHTTPsSecurePort}
 
+${filetransferEndpoint}  ${gridHTTPsHost}:${gridHTTPsPort}
+${filetransferSecureEndpoint}  ${gridHTTPsHost}:${gridHTTPsSecurePort}
+
 ${storageAreaRoot}  /storage
 
 ${vo}   testers.eu-emi.eu
