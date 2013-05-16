@@ -62,3 +62,16 @@ WebDAV GET directory with personal certificate
   Should Contain  ${output}  ${filename}
   Remove not empty directory using clientSRM  ${personalcertRWStorageArea}  ${dirname}
   [Teardown]  Clear all credentials
+
+WebDAV GET unexistent resource as anonymous
+  [Tags]  webdav  get
+  [Setup]  Init certificate and voms proxy  test0  ${vo}
+  ${dirname}  Get a unique name
+  ${surl}  Build surl  ${anonymousRWStorageArea}  ${dirname}
+  ${output}  Perform ls using clientSRM  ${surl}  -c 1
+  Should Contain  ${output}  SRM_INVALID_PATH
+  ${options}  Set variable  --verbose -X GET
+  ${url}  Set variable  http://${davEndpoint}/${anonymousRWStorageArea}/${dirname}
+  ${output}  Execute Curl with options  ${url}  ${options}
+  Should Contain  ${output}  404 Not Found
+  [Teardown]  Clear all credentials
