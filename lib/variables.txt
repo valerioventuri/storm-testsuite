@@ -41,3 +41,8 @@ ${gridproxyRWStorageArea}  igi
 ${gridproxyBisRWStorageArea}  igi-bis
 ${personalcertRWStorageArea}  igi
 ${personalcertBisRWStorageArea}  igi-bis
+
+${ldapEndpoint}  ${backEndHost}:2170
+
+${baseDNGlue}  mds-vo-name=resource,o=grid
+${baseDNGlue2}  GLUE2GroupID=resource,o=glue
